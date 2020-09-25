@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 
+// TODO: change the name of this class to PoolGame? it's going to be the file we'll ultimately end up running
 public class Collisions extends Frame {
 	public static void main(String[] args) {new Collisions();}
 
