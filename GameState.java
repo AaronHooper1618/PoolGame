@@ -273,6 +273,6 @@ class Ball {
 		g.setColor(Color.black); g.drawOval(x, y, r*2, r*2);
 
 		// draws velocity vectors for debugging purposes
-		g.setColor(Color.red); g.drawLine((int)(x+r), (int)(y+r), (int)(x+r+this.xVel/10), (int)(y+r+this.yVel/10));
+		g.setColor(Color.red); g.drawLine((int)(x+r), (int)(y+r), (int)(x+r+this.xVel/10*scale), (int)(y+r+this.yVel/10*scale));
 	}
 }

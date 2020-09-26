@@ -50,8 +50,8 @@ class CollisionCanvas extends Canvas implements Runnable{
 
 					// replaces the first ball with a ball whose velocity is based on how far you dragged the mouse
 					Ball b = new Ball(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale);
-					b.xVel = (xPressed - e.getX()) * 5;
-					b.yVel = (yPressed - e.getY()) * 5;
+					b.xVel = (xPressed - e.getX()) * 5 / scale;
+					b.yVel = (yPressed - e.getY()) * 5 / scale;
 					b.r = 235; b.g = 240; b.b = 209;
 					game.replaceBall(0, b);
 
