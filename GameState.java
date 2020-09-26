@@ -3,8 +3,8 @@ import java.util.*;
 
 // TODO: should this just be TableState and we keep track of GameState (players/turn/fouls/etc.) in another class?
 class GameState {
-	private int w, h;
-	private double friction;
+	public final int w, h;
+	private final double friction;
 	private Ball[] balls;
 
 	public GameState(){
@@ -151,10 +151,14 @@ class GameState {
 		}
 	}
 
-	// TODO: handle isotropic rescaling (probably needs to be done in Ball.drawBall())
-	public void drawBalls(Graphics g){
+	public void drawBalls(Graphics g, int w, int h){
+		// calculate scale, xOffset and yOffset for anisotropic scaling
+		double scale = Math.min((double)w/this.w, (double)h/this.h);
+		double xOffset = (w - this.w*scale)/2; 
+		double yOffset = (h - this.h*scale)/2;
+
 		for (int i = 0; i < balls.length; i++) {
-			balls[i].drawBall(g);
+			balls[i].drawBall(g, scale, xOffset, yOffset);
 		}
 	}
 }
@@ -257,16 +261,18 @@ class Ball {
 		}
 	}
 
-	// TODO: handle isotropic rescaling (pass over w and h from GameState?)
-	public void drawBall(Graphics g){
-		int x = (int)Math.round(this.xPos-this.radius);
-		int y = (int)Math.round(this.yPos-this.radius);
+	public void drawBall(Graphics g, double scale, double xOffset, double yOffset){
+		// adjust x, y and r based on scale, xOffset and yOffset for anisotropic scaling
+		int x = (int)((this.xPos-this.radius)*scale + xOffset);
+		int y = (int)((this.yPos-this.radius)*scale + yOffset);
+		int r = (int)(this.radius * scale);
 
+		// draw the ball
 		Color ballColor = new Color(this.r, this.g, this.b);
-		g.setColor(ballColor); g.fillOval(x, y, this.radius*2+1, this.radius*2+1);
-		g.setColor(Color.black); g.drawOval(x, y, this.radius*2, this.radius*2);
+		g.setColor(ballColor); g.fillOval(x, y, r*2+1, r*2+1);
+		g.setColor(Color.black); g.drawOval(x, y, r*2, r*2);
 
 		// draws velocity vectors for debugging purposes
-		g.setColor(Color.red); g.drawLine((int)(x+this.radius), (int)(y+this.radius), (int)(x+this.radius+this.xVel/10), (int)(y+this.radius+this.yVel/10));
+		g.setColor(Color.red); g.drawLine((int)(x+r), (int)(y+r), (int)(x+r+this.xVel/10), (int)(y+r+this.yVel/10));
 	}
 }
