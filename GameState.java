@@ -2,6 +2,9 @@ import java.awt.*;
 import java.util.*;
 
 // TODO: should this just be TableState and we keep track of GameState (players/turn/fouls/etc.) in another class?
+/**
+ * Represents a Game surface as well as the various Balls which are on top of it.
+ */
 class GameState {
 	public final int w, h;
 	private final double friction;
@@ -25,24 +28,42 @@ class GameState {
 		}
 	}
 
+	/**
+	 * Replaces a ball in this.balls with another ball passed in as a parameter.
+	 * 
+	 * @param i The index of the ball in this.balls which we're replacing.
+	 * @param ball The ball that we're going to replace this.balls[i] with.
+	 */
 	public void replaceBall(int i, Ball ball){
 		if(i < this.balls.length){
 			this.balls[i] = ball;
 		}
 	}
 
+	/**
+	 * Returns the distance between two balls' edges.
+	 * Calculating the distance in this way makes collision detection easier as it'll be <= 0 if there is a collision.
+	 * 
+	 * @param a The first Ball.
+	 * @param b The second Ball.
+	 * @return The distance between the edges of Ball a and Ball b.
+	 */
 	public double distanceBetween(Ball a, Ball b){
 		double distX = b.xPos - a.xPos; double distY = b.yPos - a.yPos;
 		double distance = Math.sqrt(distX*distX + distY*distY);
 
-		// note that this method returns the distance between the two balls' EDGES, not their centers
-		// reason for this is for collision checking: if the balls are colliding, this will be <= 0
+		// subtract the radii of both balls in order to get the distance between their edges
 		return distance - (a.radius + b.radius);
 	}
 
+	/**
+	 * Adjusts the velocities of two balls assuming they have collided with one another.
+	 * This follows the algorithm described in https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf.
+	 * 
+	 * @param i The index of the first ball in this.balls that we're handling collisions for.
+	 * @param j The index of the second ball in this.balls that we're handling collisions for.
+	 */
 	public void handleBallCollisions(int i, int j){
-		// formula and steps taken from https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf
-		// best to cross-reference these comments with that link
 
 		// step 0: get ball and and ball b
 		Ball a = this.balls[i]; Ball b = this.balls[j];
@@ -86,6 +107,12 @@ class GameState {
 		b.xVel = bNormalX + bTangentX; b.yVel = bNormalY + bTangentY;
 	}
 
+	/**
+	 * Handles a collision between a Ball and a boundary of the field, should it occur.
+	 * Pushes the ball outside of the wall and then changes its velocity.
+	 * 
+	 * @param i The index of the ball in this.balls that we're handling wall collisions for.
+	 */
 	public void handleWallCollisions(int i){
 		Ball a = this.balls[i];
 
@@ -108,6 +135,12 @@ class GameState {
 		}
 	}
 
+	/**
+	 * Moves all the Balls around a certain amount of time.
+	 * Also handles inter-ball collisions and wall collisions for each of the balls as they move.
+	 * 
+	 * @param time the amount of time, in seconds, that all the balls are moved forward
+	 */
 	public void moveTime(double time){
 		// shuffle the ball ordering around
 		int[] order = new int[balls.length];
@@ -145,6 +178,15 @@ class GameState {
 		}
 	}
 
+	/**
+	 * Draws all the Balls that are in the GameState onto a Graphics object.
+	 * Will also determine scale, xOffset and yOffset in advance in order to handle
+	 * anisotropic scaling based on the width and height of the canvas.
+	 * 
+	 * @param g the Graphics object being drawn onto
+	 * @param w the width of the canvas being drawn onto
+	 * @param h the height of the canvas being drawn onto
+	 */
 	public void drawBalls(Graphics g, int w, int h){
 		// calculate scale, xOffset and yOffset for anisotropic scaling
 		double scale = Math.min((double)w/this.w, (double)h/this.h);
@@ -157,6 +199,9 @@ class GameState {
 	}
 }
 
+/**
+ * Represents a ball that can move around in 2-dimensional space.
+ */
 class Ball {
 	public final int radius; 
 	public final double mass;
@@ -193,14 +238,33 @@ class Ball {
 		r = 0; g = 0; b = 200;
 	}
 
+	/**
+	 * Returns how quickly the ball is moving, independently of angle. 
+	 * Essentially just sqrt(xVel^2 + yVel^2).
+	 * 
+	 * @return the magnitude of the ball's velocity
+	 */
 	private double getVelocity(){
 		return Math.sqrt(this.xVel*this.xVel + this.yVel*this.yVel);
 	}
 
+	/**
+	 * Returns the angle that the ball is moving in. 
+	 * Essentially just calls Math.atan2().
+	 * 
+	 * @return the angle of the ball's velocity in radians 
+	*/
 	private double getAngle(){
 		return Math.atan2(this.yVel, this.xVel);
 	}
 
+	/**
+	 * Updates the position and velocity of the ball under the assumption that the ball
+	 * has moved forward a certain amount of time on a surface with some amount of friction.
+	 *
+	 * @param     time the amount of time, in seconds, that the ball is moved forward
+	 * @param friction the rate at which velocity decreases over time (velocity decreases by 1*friction every second)
+	 */
 	public void moveTime(double time, double friction){
 		// get the velocity and its angle
 		double velocity = this.getVelocity(); double angle = this.getAngle();
@@ -228,8 +292,15 @@ class Ball {
 		this.xVel = velocity*Math.cos(angle); this.yVel = velocity*Math.sin(angle);
 	}
 
-	// finds how long it'd take for the ball to travel a certain distance
-	// useful for rewinding time to avoid having balls stuck inside each other
+	/**
+	 * Returns the amount of time in seconds it'd take for a ball to travel
+	 * a given distance over a surface with some amount of friction.
+	 * Useful if one needs to move a ball backwards some distance and then move it forward in time again.
+	 *
+	 * @param  distance the distance which we're trying to determine how long it takes to travel
+	 * @param  friction the rate at which velocity decreases over time (velocity decreases by 1*friction every second)
+	 * @return          the amount of time in seconds it would take to travel distance given friction
+	 */
 	public double distanceToTime(double distance, double friction){
 		// per comments in moveTime(), distance = t*v0 - (f*t^2)/2
 		// we can just solve this for t now
@@ -255,6 +326,15 @@ class Ball {
 		}
 	}
 
+	/**
+	 * Draws the Ball onto a Graphics object. Also supports anisotropic scaling and offsetting.
+	 * The parameters of this method should be determined automatically by some other method.
+	 *
+	 * @param       g the Graphics object being drawn onto
+	 * @param   scale the factor to increase the size of the drawn ball
+	 * @param xOffset the amount of pixels to offset the drawn ball by on the xAxis
+	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
+	 */
 	public void drawBall(Graphics g, double scale, double xOffset, double yOffset){
 		// adjust x, y and r based on scale, xOffset and yOffset for anisotropic scaling
 		int x = (int)((this.xPos-this.radius)*scale + xOffset);
