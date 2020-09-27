@@ -25,12 +25,6 @@ class GameState {
 		}
 	}
 
-	public void replaceBall(int i, double xPos, double yPos, double xVel, double yVel){
-		if(i < this.balls.length){
-			this.balls[i] = new Ball(20, xPos, yPos, xVel, yVel);
-		}
-	}
-
 	public void replaceBall(int i, Ball ball){
 		if(i < this.balls.length){
 			this.balls[i] = ball;
@@ -180,7 +174,7 @@ class Ball {
 		r = 0; g = 0; b = 200;
 	}
 
-	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // used in GameState.ReplaceBall()
+	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // unused
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
