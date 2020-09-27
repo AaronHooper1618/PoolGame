@@ -33,16 +33,16 @@ class CollisionCanvas extends Canvas implements Runnable{
 
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == e.BUTTON1) { // Left button
+				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
 					xPressed = e.getX(); yPressed = e.getY();
 					xHeld = e.getX(); yHeld = e.getY();
 				}
-				else if (e.getButton() == e.BUTTON3) { // Right button
+				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
 					// stuff if we need it
 				}
 			}
 			public void mouseReleased(MouseEvent e){
-				if (e.getButton() == e.BUTTON1) { // Left button
+				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
 					// gets scale and offsets to account for anisotropic scaling
 					double scale = Math.min((double)w/game.w, (double)h/game.h);
 					double xOffset = (w - game.w*scale)/2; 
