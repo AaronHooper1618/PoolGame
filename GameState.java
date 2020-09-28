@@ -159,15 +159,23 @@ class GameState {
 					if (i != j){ // dont check for collision with itself
 						double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
 						if (d < 0){
-							// rewind time to stop the balls from intersecting
-							double t = balls[i].distanceToTime(d, friction);
+							// the ball with the higher velocity is able to move more over some period of time
+							// given the constraint that we can only go back up to time seconds...
+							// we should pick the ball with the higher velocity to increase our chances of resolving collisions
+							int k = i;
+							if (balls[i].getVelocity() < balls[j].getVelocity()){
+								k = j;
+							}
+
+							// rewind time on ball k to stop the balls from intersecting
+							double t = balls[k].distanceToTime(d, friction);
 							t = Math.max(t, 0-time);
 							balls[i].moveTime(t, friction);
 
 							this.handleBallCollisions(i, j);
 
-							// then move it forward again
-							balls[i].moveTime(-t, friction);
+							// then move ball k forward again
+							balls[k].moveTime(-t, friction);
 						}
 					}
 				}
@@ -244,7 +252,7 @@ class Ball {
 	 * 
 	 * @return the magnitude of the ball's velocity
 	 */
-	private double getVelocity(){
+	public double getVelocity(){
 		return Math.sqrt(this.xVel*this.xVel + this.yVel*this.yVel);
 	}
 
@@ -254,7 +262,7 @@ class Ball {
 	 * 
 	 * @return the angle of the ball's velocity in radians 
 	*/
-	private double getAngle(){
+	public double getAngle(){
 		return Math.atan2(this.yVel, this.xVel);
 	}
 
