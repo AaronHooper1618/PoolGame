@@ -26,12 +26,18 @@ class GameState {
 			}
 		}
 
-		walls = new Wall[5];
-		this.walls[0] = new Wall(600, 600, 800, 400);
-		this.walls[1] = new Wall(400, 400, 480, 400);
-		this.walls[2] = new Wall(480, 400, 480, 480);
-		this.walls[3] = new Wall(480, 480, 400, 480);
-		this.walls[4] = new Wall(400, 480, 400, 400);
+		walls = new Wall[9];
+		// bounding walls
+		this.walls[0] = new Wall(0, 0, 0, 599);
+		this.walls[1] = new Wall(0, 599, 799, 599);
+		this.walls[2] = new Wall(799, 599, 799, 0);
+		this.walls[3] = new Wall(799, 0, 0, 0);
+
+		this.walls[4] = new Wall(599, 599, 799, 400);
+		this.walls[5] = new Wall(400, 400, 480, 400, 1);
+		this.walls[6] = new Wall(480, 400, 480, 480, 1);
+		this.walls[7] = new Wall(480, 480, 400, 480, 1);
+		this.walls[8] = new Wall(400, 480, 400, 400, 1);
 	}
 
 	/**
@@ -208,7 +214,7 @@ class GameState {
 	public void draw(Graphics g, int w, int h){
 		// calculate scale, xOffset and yOffset for anisotropic scaling
 		double scale = Math.min((double)w/this.w, (double)h/this.h);
-		double xOffset = (w - this.w*scale)/2; 
+		double xOffset = (w - this.w*scale)/2;
 		double yOffset = (h - this.h*scale)/2;
 
 		for (int i = 0; i < balls.length; i++) {
@@ -216,6 +222,12 @@ class GameState {
 		}
 
 		for (int i = 0; i < walls.length; i++){
+			walls[i].r = 0;
+			for (int j = 0; j < balls.length; j++){
+				double e = walls[i].isBallColliding(balls[j]);
+				if(e < 0){walls[i].r = 255;} // make the wall red if a ball is colliding with it for now
+				                             // TODO: actually implement collision logic
+			}
 			walls[i].drawWall(g, scale, xOffset, yOffset);
 		}
 	}
