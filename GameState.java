@@ -161,8 +161,7 @@ class GameState {
 					double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
 					if (d < 0){
 						// the ball with the higher velocity is able to move more over some period of time
-						// given the constraint that we can only go back up to time seconds...
-						// we should pick the ball with the higher velocity to increase our chances of resolving collisions
+						// we should pick the ball with the higher velocity so not as much time ends up getting rewinded
 						int k = i;
 						if (balls[i].getVelocity() < balls[j].getVelocity()){
 							k = j;
@@ -170,7 +169,6 @@ class GameState {
 
 						// rewind time on ball k to stop the balls from intersecting
 						double t = balls[k].distanceToTime(d, friction);
-						t = Math.max(t, 0-time);
 						balls[i].moveTime(t, friction);
 
 						this.handleBallCollisions(i, j, 0.95);
