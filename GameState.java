@@ -150,39 +150,37 @@ class GameState {
 		// move the balls
 		for (int o = 0; o < order.length; o++) {
 			int i = order[o];
-			if (balls[i].xVel != 0 && balls[i].yVel != 0 || true){
-				balls[i].moveTime(time, friction);
+			balls[i].moveTime(time, friction);
 			
-				// handle collisions between ball i and every other ball
-				// TODO: balls still get stuck inside each other with this; this method may need a rewrite still
-				for (int j = 0; j < balls.length; j++) {
-					if (i != j){ // dont check for collision with itself
-						double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
-						if (d < 0){
-							// the ball with the higher velocity is able to move more over some period of time
-							// given the constraint that we can only go back up to time seconds...
-							// we should pick the ball with the higher velocity to increase our chances of resolving collisions
-							int k = i;
-							if (balls[i].getVelocity() < balls[j].getVelocity()){
-								k = j;
-							}
-
-							// rewind time on ball k to stop the balls from intersecting
-							double t = balls[k].distanceToTime(d, friction);
-							t = Math.max(t, 0-time);
-							balls[i].moveTime(t, friction);
-
-							this.handleBallCollisions(i, j);
-
-							// then move ball k forward again
-							balls[k].moveTime(-t, friction);
+			// handle collisions between ball i and every other ball
+			// TODO: balls still get stuck inside each other with this; this method may need a rewrite still
+			for (int j = 0; j < balls.length; j++) {
+				if (i != j){ // dont check for collision with itself
+					double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
+					if (d < 0){
+						// the ball with the higher velocity is able to move more over some period of time
+						// given the constraint that we can only go back up to time seconds...
+						// we should pick the ball with the higher velocity to increase our chances of resolving collisions
+						int k = i;
+						if (balls[i].getVelocity() < balls[j].getVelocity()){
+							k = j;
 						}
+
+						// rewind time on ball k to stop the balls from intersecting
+						double t = balls[k].distanceToTime(d, friction);
+						t = Math.max(t, 0-time);
+						balls[i].moveTime(t, friction);
+
+						this.handleBallCollisions(i, j);
+
+						// then move ball k forward again
+						balls[k].moveTime(-t, friction);
 					}
 				}
-
-				// handle wall collisions
-				this.handleWallCollisions(i);
 			}
+
+			// handle wall collisions
+			this.handleWallCollisions(i);
 		}
 	}
 
