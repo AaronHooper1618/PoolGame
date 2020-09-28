@@ -160,6 +160,11 @@ class GameState {
 				if (i != j){ // dont check for collision with itself
 					double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
 					if (d < 0){
+						// add the distance lost in distanceBetween() back
+						// intended effect of this is to make collisions less likely
+						// but if they do happen, the balls ACTUALLY won't be colliding anymore
+						d -= (balls[i].radius + balls[j].radius) * 0.01;
+
 						// the ball with the higher velocity is able to move more over some period of time
 						// we should pick the ball with the higher velocity so not as much time ends up getting rewinded
 						int k = i;
