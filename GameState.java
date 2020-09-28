@@ -53,7 +53,11 @@ class GameState {
 		double distance = Math.sqrt(distX*distX + distY*distY);
 
 		// subtract the radii of both balls in order to get the distance between their edges
-		return distance - (a.radius + b.radius);
+		//     this function now multiplies the sum of the radii by 0.99 here in order to mitigate an issue where balls get stuck
+		//     the issue seems to get exacerbated whenever balls are placed exactly right next to each other (0 distance)
+		//     so doing this will make the balls look like they're next to each other even though they really aren't
+		//     good enough hack for now.
+		return distance - (a.radius + b.radius)*0.99;
 	}
 
 	/**
