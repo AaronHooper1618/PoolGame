@@ -38,7 +38,8 @@ class CollisionCanvas extends Canvas implements Runnable{
 					xHeld = e.getX(); yHeld = e.getY();
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
-					// stuff if we need it
+					// reset the GameState on right mouse button click
+					game = new GameState();
 				}
 			}
 			public void mouseReleased(MouseEvent e){
