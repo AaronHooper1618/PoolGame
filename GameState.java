@@ -155,10 +155,9 @@ class GameState {
 			balls[i].moveTime(time, friction);
 			
 			// handle collisions between ball i and every other ball
-			// TODO: balls still get stuck inside each other with this; this method may need a rewrite still
 			for (int j = 0; j < balls.length; j++) {
 				if (i != j){ // dont check for collision with itself
-					double d = distanceBetween(balls[i], balls[j]); // TODO: this distance is wrong pls fix thnx
+					double d = distanceBetween(balls[i], balls[j]);
 					if (d < 0){
 						// add the distance lost in distanceBetween() back
 						// intended effect of this is to make collisions less likely
