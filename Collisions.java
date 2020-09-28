@@ -53,7 +53,7 @@ class CollisionCanvas extends Canvas implements Runnable{
 					Ball b = new Ball(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale);
 					b.xVel = (xPressed - e.getX()) * 5 / scale;
 					b.yVel = (yPressed - e.getY()) * 5 / scale;
-					b.r = 235; b.g = 240; b.b = 209;
+					b.setColor(235, 240, 209);
 					game.replaceBall(0, b);
 
 					xPressed = -1; yPressed = -1;

@@ -16,9 +16,7 @@ class GameState {
 		int i = 0;
 
 		this.balls[0] = new Ball(20, 200, 280); i++;
-		this.balls[0].r = 235;
-		this.balls[0].g = 240;
-		this.balls[0].b = 209;
+		this.balls[0].setColor(235, 240, 209);
 
 		for(int j = 0; j < 6; j++){
 			for(int k = 0; k < j; k++){
@@ -215,37 +213,48 @@ class GameState {
 class Ball {
 	public final int radius; 
 	public final double mass;
-	public int r, g, b;
 	public double xPos, yPos;
 	public double xVel, yVel;
+	private int r, g, b;
 
 	// TODO: this is way too many constructors lol
 	//       either figure out how to organize this or mark which ones we're using and decide whether to cut the rest
-	//       also, there isn't one for pre-defining the color, so that's even more of a mess. that's nice.
 	public Ball(int radius, double mass, double xPos, double yPos, double xVel, double yVel){  // unused
 		this.radius = radius; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
-		r = 0; g = 0; b = 200;
+		this.setColor(0, 0, 200);
 	}
 
 	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // unused
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
-		r = 0; g = 0; b = 200;
+		this.setColor(0, 0, 200);
 	}
 	
 	public Ball(int radius, double mass, double xPos, double yPos){ // unused
 		this.radius = radius; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
-		r = 0; g = 0; b = 200;
+		this.setColor(0, 0, 200);
 	}
 
 	public Ball(int radius, double xPos, double yPos){ // used in GameState constructor and (tentatively) CollisionCanvas MouseReleased() listener
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
-		r = 0; g = 0; b = 200;
+		this.setColor(0, 0, 200);
+	}
+
+	/**
+	 * Sets the color of the ball given some RGB values.
+	 * These values should be within the range 0-255 inclusive.
+	 * 
+	 * @param r The red component of the color.
+	 * @param g The blue component of the color.
+	 * @param b The green component of the color.
+	 */
+	public void setColor(int r, int g, int b){
+		this.r = r; this.g = g; this.b = b;
 	}
 
 	/**
