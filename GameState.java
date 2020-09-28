@@ -9,9 +9,10 @@ class GameState {
 	public final int w, h;
 	private final double friction;
 	private Ball[] balls;
+	private Wall[] walls;
 
 	public GameState(){
-		w = 784; h = 561; friction = 200;
+		w = 800; h = 600; friction = 200;
 		balls = new Ball[16];
 		int i = 0;
 
@@ -24,6 +25,13 @@ class GameState {
 				i++;
 			}
 		}
+
+		walls = new Wall[5];
+		this.walls[0] = new Wall(600, 600, 800, 400);
+		this.walls[1] = new Wall(400, 400, 480, 400);
+		this.walls[2] = new Wall(480, 400, 480, 480);
+		this.walls[3] = new Wall(480, 480, 400, 480);
+		this.walls[4] = new Wall(400, 480, 400, 400);
 	}
 
 	/**
@@ -189,7 +197,7 @@ class GameState {
 	}
 
 	/**
-	 * Draws all the Balls that are in the GameState onto a Graphics object.
+	 * Draws all the Balls and Walls that are in the GameState onto a Graphics object.
 	 * Will also determine scale, xOffset and yOffset in advance in order to handle
 	 * anisotropic scaling based on the width and height of the canvas.
 	 * 
@@ -197,7 +205,7 @@ class GameState {
 	 * @param w the width of the canvas being drawn onto
 	 * @param h the height of the canvas being drawn onto
 	 */
-	public void drawBalls(Graphics g, int w, int h){
+	public void draw(Graphics g, int w, int h){
 		// calculate scale, xOffset and yOffset for anisotropic scaling
 		double scale = Math.min((double)w/this.w, (double)h/this.h);
 		double xOffset = (w - this.w*scale)/2; 
@@ -205,6 +213,10 @@ class GameState {
 
 		for (int i = 0; i < balls.length; i++) {
 			balls[i].drawBall(g, scale, xOffset, yOffset);
+		}
+
+		for (int i = 0; i < walls.length; i++){
+			walls[i].drawWall(g, scale, xOffset, yOffset);
 		}
 	}
 }

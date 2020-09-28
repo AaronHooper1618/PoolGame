@@ -116,7 +116,7 @@ class CollisionCanvas extends Canvas implements Runnable{
 		for (int i = 0; i < 10; i++){
 			game.moveTime(t/10.0);
 		}
-		game.drawBalls(g, w, h);
+		game.draw(g, w, h);
 
 		if (xPressed >= 0){
 			double scale = Math.min((double)w/game.w, (double)h/game.h); // recalculates scaling to account for anisotropic scaling
