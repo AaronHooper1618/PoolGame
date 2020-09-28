@@ -6,13 +6,15 @@ import java.awt.*;
 public class Wall {
     public final double x1, y1; // first endpoint
     public final double x2, y2; // second endpoint
-    private final int normal;
-    private final double length;
-    private final double angle;
+    public final double length;
+    public final double angle;
     public int r, g, b;
 
+    // TODO: Add a way to define what direction the normal force is facing (somehow?)
     /**
-     * Creates a wall which extends across 2 endpoints.
+     * Creates a one-way wall which extends across 2 endpoints.
+     * These walls have a normal force that goes in the opposite direction of their orientation.
+     * i.e. Enclosed spaces should be drawn counter-clockwise and boxes should be drawn clockwise.
      * 
      * @param x1 the x coordinate for the first endpoint
      * @param y1 the y coordinate for the first endpoint
@@ -22,26 +24,6 @@ public class Wall {
     public Wall(double x1, double y1, double x2, double y2){
         this.x1 = x1; this.y1 = y1;
         this.x2 = x2; this.y2 = y2;
-        this.normal = -1;
-
-        double dx = this.x2 - this.x1; double dy = this.y2 - this.y1;
-        this.length = Math.sqrt(dx*dx + dy*dy);
-        this.angle = Math.atan2(dy, dx);
-    }
-
-    /**
-     * Creates a wall which extends across 2 endpoints.
-     * 
-     * @param     x1 the x coordinate for the first endpoint
-     * @param     y1 the y coordinate for the first endpoint
-     * @param     x2 the x coordinate for the second endpoint
-     * @param     y2 the y coordinate for the second endpoint
-     * @param normal the direction of the normal force (-1 makes normal force point ccw; 1 makes normal force point cw)
-     */
-    public Wall(double x1, double y1, double x2, double y2, int normal){
-        this.x1 = x1; this.y1 = y1;
-        this.x2 = x2; this.y2 = y2;
-        this.normal = normal / Math.abs(normal);
 
         double dx = this.x2 - this.x1; double dy = this.y2 - this.y1;
         this.length = Math.sqrt(dx*dx + dy*dy);
@@ -62,7 +44,7 @@ public class Wall {
         double xa = this.x1*Math.cos(a) - this.y1*Math.sin(a);
         double ya = this.x1*Math.sin(a) + this.y1*Math.cos(a);
         double xb = this.x2*Math.cos(a) - this.y2*Math.sin(a);
-        double yb = this.x2*Math.sin(a) + this.y2*Math.cos(a);
+        // yb would be the same as ya; no need to calculate it here
 
         // rotate the ball along -this.angle accordingly
         double x_ball = ball.xPos*Math.cos(a) - ball.yPos*Math.sin(a);
@@ -76,17 +58,17 @@ public class Wall {
         // find how far away the ball is on the y axis
         double y_distance = ya - (y_ball + ball.radius);
 
-        // TODO: should we return a more appropriate value than what's listed here?
-        if (x_distance < ball.radius){ // if the rotated ball's within the same x coordinate range as the rotated wall...
-            if (Math.abs(y_distance) < ball.radius*2){ // ...and its actually intersecting the wall...
-                return y_distance; // ...return the negative (colliding) y_distance
+        if (Math.abs(y_distance) < ball.radius*2){ // ...if the ball's within the wall on the y-axis...
+            if (x_distance < ball.radius){ // ...and within the wall on the x-axis...
+                // ...return the amount of distance the ball has collided with the wall
+                return y_distance + Math.sin(x_distance/ball.radius)*ball.radius;
             }
-            else { // otherwise...
-                return Math.abs(y_distance); // ...return the absolute (not colliding) value of it
+            else { // if it's not in that x coordinate range...
+                return x_distance; // return how far away it is on the x axis.
             }
         }
-        else { // if it's not in that x coordinate range...
-            return x_distance; // return how far away it is on the x axis.
+        else { // otherwise...
+            return Math.abs(y_distance); // ...return the absolute (not colliding) value of it
         }
     }
 
