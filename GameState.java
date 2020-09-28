@@ -60,13 +60,14 @@ class GameState {
 
 	/**
 	 * Adjusts the velocities of two balls assuming they have collided with one another.
+	 * Can also set a custom coefficient of restitution (ratio of final over initial velocities) to simulate inelastic collisions.
 	 * This follows the algorithm described in https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf.
 	 * 
-	 * @param i The index of the first ball in this.balls that we're handling collisions for.
-	 * @param j The index of the second ball in this.balls that we're handling collisions for.
+	 * @param   i The index of the first ball in this.balls that we're handling collisions for.
+	 * @param   j The index of the second ball in this.balls that we're handling collisions for.
+	 * @param cor The coefficient of restitution (1 for elastic collision; 0 for perfectly inelastic collision).
 	 */
-	public void handleBallCollisions(int i, int j){
-
+	public void handleBallCollisions(int i, int j, double cor){
 		// step 0: get ball and and ball b
 		Ball a = this.balls[i]; Ball b = this.balls[j];
 
@@ -86,11 +87,10 @@ class GameState {
 
 		// step 3: the tangent components will not change magnitude at all (after all, its the part facing perpendicular to the other object)
 		//         this means we've reduced this into a one dimensional collision along the normal vector. apply that formula to aVelNormal and bVelNormal.
-		//         (formula being vAn = (mB(vBn-vAn) + mAvAn + mBvBn) / (mA + mB) and vice-versa)
-		//         TODO: this formula comes from https://en.wikipedia.org/wiki/Inelastic_collision which might be useful if we end up needing to apply restitution
+		//         (formula being vAn = (CoR*mB(vBn-vAn) + mAvAn + mBvBn) / (mA + mB) and vice-versa; taken from https://en.wikipedia.org/wiki/Inelastic_collision)
 
-		double newAVN = (b.mass*(bVelNormal - aVelNormal) + a.mass*aVelNormal + b.mass*bVelNormal) / (a.mass + b.mass);
-		double newBVN = (a.mass*(aVelNormal - bVelNormal) + a.mass*aVelNormal + b.mass*bVelNormal) / (a.mass + b.mass);
+		double newAVN = (cor*b.mass*(bVelNormal - aVelNormal) + a.mass*aVelNormal + b.mass*bVelNormal) / (a.mass + b.mass);
+		double newBVN = (cor*a.mass*(aVelNormal - bVelNormal) + a.mass*aVelNormal + b.mass*bVelNormal) / (a.mass + b.mass);
 		aVelNormal = newAVN; bVelNormal = newBVN;
 
 		// step 4: you now have the normal and tangent velocities for both balls
@@ -173,7 +173,7 @@ class GameState {
 						t = Math.max(t, 0-time);
 						balls[i].moveTime(t, friction);
 
-						this.handleBallCollisions(i, j);
+						this.handleBallCollisions(i, j, 0.95);
 
 						// then move ball k forward again
 						balls[k].moveTime(-t, friction);
