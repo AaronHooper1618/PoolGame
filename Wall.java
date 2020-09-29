@@ -8,7 +8,7 @@ public class Wall {
     public final double x2, y2; // second endpoint
     public final double length;
     public final double angle;
-    public int r, g, b;
+    private int r, g, b;
 
     // TODO: Add a way to define what direction the normal force is facing (somehow?)
     /**
@@ -29,6 +29,18 @@ public class Wall {
         this.length = Math.sqrt(dx*dx + dy*dy);
         this.angle = Math.atan2(dy, dx);
     }
+
+    /**
+	 * Sets the color of the wall given some RGB values.
+	 * These values should be within the range 0-255 inclusive.
+	 * 
+	 * @param r The red component of the color.
+	 * @param g The blue component of the color.
+	 * @param b The green component of the color.
+	 */
+	public void setColor(int r, int g, int b){
+		this.r = r; this.g = g; this.b = b;
+	}
 
     /**
      * Determines if a Ball is colliding with this Wall.
