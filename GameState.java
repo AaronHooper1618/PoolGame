@@ -152,6 +152,13 @@ class GameState {
 			int j = order[o];
 			double distance = walls[j].isBallColliding(a);
 			if (distance < 0){
+				// if we're more than a.radius into the wall, we might as well be on the other side of it
+				// so add 2*a.radius and try to move that distance instead
+				// effectively makes the walls have 2-way collision rather than 1-way
+				if (distance < -a.radius){
+					distance += 2*a.radius;
+				}
+
 				// get the unit tangent vector (Wall but with length of 1)
 				double tangentX = (walls[j].x2 - walls[j].x1)/walls[j].length;
 				double tangentY = (walls[j].y2 - walls[j].y1)/walls[j].length;

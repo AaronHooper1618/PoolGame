@@ -10,11 +10,8 @@ public class Wall {
 	public final double angle;
 	private int r, g, b;
 
-	// TODO: Add a way to define what direction the normal force is facing (somehow?)
 	/**
-	 * Creates a one-way wall which extends across 2 endpoints.
-	 * These walls have a normal force that goes in the opposite direction of their orientation.
-	 * i.e. Enclosed spaces should be drawn counter-clockwise and boxes should be drawn clockwise.
+	 * Creates a wall which extends across 2 endpoints.
 	 * 
 	 * @param x1 the x coordinate for the first endpoint
 	 * @param y1 the y coordinate for the first endpoint
