@@ -9,9 +9,10 @@ class GameState {
 	public final int w, h;
 	private final double friction;
 	private Ball[] balls;
+	private Wall[] walls;
 
 	public GameState(){
-		w = 784; h = 561; friction = 200;
+		w = 800; h = 600; friction = 200;
 		balls = new Ball[16];
 		int i = 0;
 
@@ -24,6 +25,28 @@ class GameState {
 				i++;
 			}
 		}
+
+		walls = new Wall[13];
+		// bounding walls
+		this.walls[0] = new Wall(0, 0, 0, 599);
+		this.walls[1] = new Wall(0, 599, 799, 599);
+		this.walls[2] = new Wall(799, 599, 799, 0);
+		this.walls[3] = new Wall(799, 0, 0, 0);
+
+		// angled wall
+		this.walls[4] = new Wall(599, 599, 799, 300);
+
+		// enclosed space (left box; ccw orientation)
+		this.walls[5] = new Wall(200, 400, 200, 480);
+		this.walls[6] = new Wall(200, 480, 280, 480);
+		this.walls[7] = new Wall(280, 480, 280, 400);
+		this.walls[8] = new Wall(280, 400, 200, 400);
+
+		// closed off space (right box; cw orientation)
+		this.walls[9] = new Wall(400, 400, 480, 400);
+		this.walls[10] = new Wall(480, 400, 480, 480);
+		this.walls[11] = new Wall(480, 480, 400, 480);
+		this.walls[12] = new Wall(400, 480, 400, 400);
 	}
 
 	/**
@@ -110,30 +133,53 @@ class GameState {
 	}
 
 	/**
-	 * Handles a collision between a Ball and a boundary of the field, should it occur.
+	 * Handles a collision between a Ball and a Wall, should it occur.
 	 * Pushes the ball outside of the wall and then changes its velocity.
+	 * Can also set a custom coefficient of restitution (ratio of final over initial velocities) to simulate inelastic collisions.
 	 * 
-	 * @param i The index of the ball in this.balls that we're handling wall collisions for.
+	 * @param   i The index of the ball in this.balls that we're handling wall collisions for.
+	 * @param cor The coefficient of restitution (1 for elastic collision; 0 for perfectly inelastic collision).
 	 */
-	public void handleWallCollisions(int i){
+	public void handleWallCollisions(int i, double cor){
 		Ball a = this.balls[i];
 
-		// TODO: this is ugly (well, even more so than usual), clean it up
-		if (a.xPos < a.radius){ // left boundary
-			a.moveTime((a.radius - a.xPos)/a.xVel, this.friction);
-			a.xVel = 0-a.xVel;
-		}
-		else if (a.xPos > (this.w - a.radius)){ // right boundary
-			a.moveTime(((this.w-a.radius - a.xPos))/a.xVel, this.friction);
-			a.xVel = 0-a.xVel;
-		}
-		else if (a.yPos < a.radius){ // top boundary
-			a.moveTime((a.radius - a.yPos)/a.yVel, this.friction);
-			a.yVel = 0-a.yVel;
-		}
-		else if (a.yPos > (this.h - a.radius)){ // bottom boundary
-			a.moveTime(((this.h-a.radius) - a.yPos)/a.yVel, this.friction);
-			a.yVel = 0-a.yVel;
+		// shuffle the wall ordering around
+		int[] order = new int[walls.length];
+		for (int j = 0; j < order.length; j++) {order[j] = j;}
+		Collections.shuffle(Arrays.asList(order));
+
+		for(int o = 0; o < order.length; o++){
+			int j = order[o];
+			double distance = walls[j].isBallColliding(a);
+			if (distance < 0){
+				// get the unit tangent vector (Wall but with length of 1)
+				double tangentX = (walls[j].x2 - walls[j].x1)/walls[j].length;
+				double tangentY = (walls[j].y2 - walls[j].y1)/walls[j].length;
+				
+				// get the unit normal vector
+				double normalX = tangentY; double normalY = -tangentX;
+
+				// we can determine how far to move backwards with a couple steps
+				double velNormal = normalX * a.xVel + normalY * a.yVel; // get the dot product of the ball's velocity onto the normal vector
+				velNormal = velNormal / a.getVelocity(); // calculate how much of the ball's velocity is going along the normal vector as a ratio
+				distance /= velNormal; // divide the distance from isBallColliding() by that ratio
+
+				// move the ball back that determined distance
+				double time = a.distanceToTime(-distance, this.friction);
+				a.moveTime(time, this.friction);
+
+				// the rest is pretty similar to the elastic collisions in handleBallCollisions()
+				double velTangent = tangentX * a.xVel + tangentY * a.yVel; // so get the dot product of the ball's velocity onto the tangent vector
+				tangentX *= velTangent; tangentY *= velTangent; // and scale tangentX/tangentY by that dot product
+
+				velNormal = normalX * a.xVel + normalY * a.yVel; // repeat for normal vector
+				velNormal *= cor; // except multiply it by the coefficient of restitution
+				normalX *= -velNormal; normalY *= -velNormal; // and also invert it
+
+				// change balls[i]'s velocity accordingly and move it forwards in time
+				balls[i].xVel = tangentX + normalX; balls[i].yVel = tangentY + normalY;
+				balls[i].moveTime(-time, this.friction);
+			}
 		}
 	}
 
@@ -184,12 +230,12 @@ class GameState {
 			}
 
 			// handle wall collisions
-			this.handleWallCollisions(i);
+			this.handleWallCollisions(i, 0.95);
 		}
 	}
 
 	/**
-	 * Draws all the Balls that are in the GameState onto a Graphics object.
+	 * Draws all the Balls and Walls that are in the GameState onto a Graphics object.
 	 * Will also determine scale, xOffset and yOffset in advance in order to handle
 	 * anisotropic scaling based on the width and height of the canvas.
 	 * 
@@ -197,14 +243,18 @@ class GameState {
 	 * @param w the width of the canvas being drawn onto
 	 * @param h the height of the canvas being drawn onto
 	 */
-	public void drawBalls(Graphics g, int w, int h){
+	public void draw(Graphics g, int w, int h){
 		// calculate scale, xOffset and yOffset for anisotropic scaling
 		double scale = Math.min((double)w/this.w, (double)h/this.h);
-		double xOffset = (w - this.w*scale)/2; 
+		double xOffset = (w - this.w*scale)/2;
 		double yOffset = (h - this.h*scale)/2;
 
 		for (int i = 0; i < balls.length; i++) {
 			balls[i].drawBall(g, scale, xOffset, yOffset);
+		}
+
+		for (int i = 0; i < walls.length; i++){
+			walls[i].drawWall(g, scale, xOffset, yOffset);
 		}
 	}
 }
