@@ -5,26 +5,6 @@
  */
 public class CollisionHandler {
 	/**
-	 * Returns the distance between two balls' edges.
-	 * Calculating the distance in this way makes collision detection easier as it'll be <= 0 if there is a collision.
-	 * 
-	 * @param a the first Ball.
-	 * @param b the second Ball.
-	 * @return  the distance between the edges of Ball a and Ball b.
-	 */
-	public static double distanceBetween(Ball a, Ball b){
-		double distX = b.xPos - a.xPos; double distY = b.yPos - a.yPos;
-		double distance = Math.sqrt(distX*distX + distY*distY);
-
-		// subtract the radii of both balls in order to get the distance between their edges
-		//     this function now multiplies the sum of the radii by 0.99 here in order to mitigate an issue where balls get stuck
-		//     the issue seems to get exacerbated whenever balls are placed exactly right next to each other (0 distance)
-		//     so doing this will make the balls look like they're next to each other even though they really aren't
-		//     good enough hack for now.
-		return distance - (a.radius + b.radius)*0.99;
-	}
-	
-	/**
 	 * Adjusts the velocities of two balls assuming they have collided with one another.
 	 * Can also set a custom coefficient of restitution (ratio of final over initial velocities) to simulate inelastic collisions.
 	 * This follows the algorithm described in https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf.
@@ -35,7 +15,7 @@ public class CollisionHandler {
 	 * @param      cor the coefficient of restitution (1 for elastic collision; 0 for perfectly inelastic collision).
 	 */
 	public static void handleBallCollisions(Ball a, Ball b, double friction, double cor){
-		double distance = CollisionHandler.distanceBetween(a, b);
+		double distance = a.distanceFrom(b);
 		
 		if (distance < 0){
 			// add the distance lost in distanceBetween() back

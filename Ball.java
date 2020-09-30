@@ -139,6 +139,25 @@ class Ball {
 	}
 
 	/**
+	 * Returns the distance between this ball and another ball's edges.
+	 * Calculating the distance in this way makes collision detection easier as it'll be <= 0 if there is a collision.
+	 * 
+	 * @param other the other Ball we want to find the distance from.
+	 * @return      the distance between the edges of this Ball and the other Ball.
+	 */
+	public double distanceFrom(Ball other){
+		double distX = other.xPos - this.xPos; double distY = other.yPos - this.yPos;
+		double distance = Math.sqrt(distX*distX + distY*distY);
+
+		// subtract the radii of both balls in order to get the distance between their edges
+		//     this function now multiplies the sum of the radii by 0.99 here in order to mitigate an issue where balls get stuck
+		//     the issue seems to get exacerbated whenever balls are placed exactly right next to each other (0 distance)
+		//     so doing this will make the balls look like they're next to each other even though they really aren't
+		//     good enough hack for now.
+		return distance - (this.radius + other.radius)*0.99;
+	}
+
+	/**
 	 * Draws the Ball onto a Graphics object. Also supports anisotropic scaling and offsetting.
 	 * The parameters of this method should be determined automatically by some other method.
 	 *
