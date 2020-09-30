@@ -61,25 +61,6 @@ class GameState {
 		}
 	}
 
-	/**
-	 * Returns the distance between two balls' edges.
-	 * Calculating the distance in this way makes collision detection easier as it'll be <= 0 if there is a collision.
-	 * 
-	 * @param a The first Ball.
-	 * @param b The second Ball.
-	 * @return The distance between the edges of Ball a and Ball b.
-	 */
-	public double distanceBetween(Ball a, Ball b){
-		double distX = b.xPos - a.xPos; double distY = b.yPos - a.yPos;
-		double distance = Math.sqrt(distX*distX + distY*distY);
-
-		// subtract the radii of both balls in order to get the distance between their edges
-		//     this function now multiplies the sum of the radii by 0.99 here in order to mitigate an issue where balls get stuck
-		//     the issue seems to get exacerbated whenever balls are placed exactly right next to each other (0 distance)
-		//     so doing this will make the balls look like they're next to each other even though they really aren't
-		//     good enough hack for now.
-		return distance - (a.radius + b.radius)*0.99;
-	}
 
 	/**
 	 * Moves all the Balls around a certain amount of time.
