@@ -46,8 +46,8 @@ class TableState {
 		addWall(new Wall(400, 480, 400, 400));
 	}
 
-	// TODO: lots of this.[bw]alls.get(i) calls; should we add a getBall and getWall method?
-	/** Adds a new ball onto the table. 
+	/** 
+	 * Adds a new ball onto the table. 
 	 * 
 	 * @param ball The ball that we're going to add to the table.
 	 */
@@ -55,12 +55,33 @@ class TableState {
 		this.balls.add(ball);
 	}
 
-	/** Adds a new wall onto the table. 
+	/** 
+	 * Adds a new wall onto the table. 
 	 * 
 	 * @param wall The wall that we're going to add to the table.
 	 */
 	public void addWall(Wall wall){
 		this.walls.add(wall);
+	}
+
+	/** 
+	 * Adds a new ball onto the table. 
+	 * 
+	 * @param i The index of the ball we're trying to get.
+	 * @return  The ith ball in this.balls.
+	 */
+	public Ball getBall(int i){
+		return this.balls.get(i);
+	}
+
+	/** 
+	 * Adds a new wall onto the table. 
+	 * 
+	 * @param i The index of the wall we're trying to get.
+	 * @return  The ith wall in this.walls.
+	 */
+	public Wall getWall(int i){
+		return this.walls.get(i);
 	}
 
 	/**
@@ -88,12 +109,12 @@ class TableState {
 		// move the balls
 		for (int b = 0; b < ball_order.length; b++) {
 			int i = ball_order[b];
-			balls.get(i).moveTime(time, this.friction);
+			getBall(i).moveTime(time, this.friction);
 			
 			// handle collisions between ball i and every other ball
 			for (int j = 0; j < balls.size(); j++) {
 				if (i != j){ // dont check for collision with itself
-					CollisionHandler.handleBallCollisions(balls.get(i), balls.get(j), this.friction, 0.95);
+					CollisionHandler.handleBallCollisions(getBall(i), getBall(j), this.friction, 0.95);
 				}
 			}
 
@@ -104,7 +125,7 @@ class TableState {
 
 			for(int w = 0; w < wall_order.length; w++){
 				int j = wall_order[w];
-				CollisionHandler.handleWallCollisions(balls.get(i), walls.get(j), this.friction, 0.95);
+				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
 		}
 	}
@@ -130,14 +151,14 @@ class TableState {
 			// TODO: ignoring the cue-ball is hard coded in by checking every ball in TableState.balls from index 1 onwards
 			//       this function was written very hastily and needs to be refactored to fix this
 			for (int b = 1; b < balls.size(); b++){
-				if (balls.get(b).distanceFrom(ghost) < 0){
+				if (getBall(b).distanceFrom(ghost) < 0){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
 				}
 			}
 
 			// check if it collides with any of the walls
 			for (int w = 0; w < walls.size(); w++){
-				if (walls.get(w).isBallColliding(ghost) < 0){
+				if (getWall(w).isBallColliding(ghost) < 0){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
 				}
 			}
@@ -166,11 +187,11 @@ class TableState {
 		double yOffset = (h - this.h*scale)/2;
 
 		for (int i = 0; i < balls.size(); i++) {
-			balls.get(i).drawBall(g, scale, xOffset, yOffset);
+			getBall(i).drawBall(g, scale, xOffset, yOffset);
 		}
 
 		for (int i = 0; i < walls.size(); i++){
-			walls.get(i).drawWall(g, scale, xOffset, yOffset);
+			getWall(i).drawWall(g, scale, xOffset, yOffset);
 		}
 	}
 }
