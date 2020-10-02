@@ -109,6 +109,17 @@ class TableState {
 		}
 	}
 
+	/**
+	 * Determines where a ball of a given radius at a certain position with a certain velocity
+	 * will collide with some other wall or ball on the table.
+	 * 
+	 * @param radius the radius of the ball
+	 * @param   xPos the x position of the ball
+	 * @param   yPos the y position of the ball
+	 * @param   xVel the speed of the ball along the x axis
+	 * @param   yVel the speed of the ball along the y axis
+	 * @return       an array of doubles containing the x coordinate and y coordinate of the collision point in that order
+	 */
 	public double[] nextCollisionPoint(int radius, double xPos, double yPos, double xVel, double yVel){
 		// make a ghost ball with the parameters we're looking at
 		Ball ghost = new Ball(radius, xPos, yPos, xVel, yVel);
