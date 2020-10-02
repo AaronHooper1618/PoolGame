@@ -144,20 +144,15 @@ class TableState {
 	}
 
 	/**
-	 * Draws all the Balls and Walls that are in the GameState onto a Graphics object.
-	 * Will also determine scale, xOffset and yOffset in advance in order to handle
-	 * isotropic scaling based on the width and height of the canvas.
+	 * Draws all the Balls and Walls that are in the TableState onto a Graphics object.
+	 * Scaling and offset parameters should be set by GameState.draw() automatically.
 	 * 
-	 * @param g the Graphics object being drawn onto
-	 * @param w the width of the canvas being drawn onto
-	 * @param h the height of the canvas being drawn onto
+	 * @param       g the Graphics object being drawn onto
+	 * @param   scale the factor to increase the size of the drawn ball
+	 * @param xOffset the amount of pixels to offset the drawn ball by on the xAxis
+	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
-	public void draw(Graphics g, int w, int h){
-		// calculate scale, xOffset and yOffset for isotropic scaling
-		double scale = Math.min((double)w/this.w, (double)h/this.h);
-		double xOffset = (w - this.w*scale)/2;
-		double yOffset = (h - this.h*scale)/2;
-
+	public void draw(Graphics g, double scale, double xOffset, double yOffset){
 		for (int i = 0; i < balls.size(); i++) {
 			getBall(i).drawBall(g, scale, xOffset, yOffset);
 		}

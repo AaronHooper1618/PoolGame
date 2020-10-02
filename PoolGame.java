@@ -44,9 +44,9 @@ class PoolCanvas extends Canvas implements Runnable{
 			public void mouseReleased(MouseEvent e){
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
 					// gets scale and offsets to account for isotropic scaling
-					double scale = Math.min((double)w/game.w, (double)h/game.h);
-					double xOffset = (w - game.w*scale)/2; 
-					double yOffset = (h - game.h*scale)/2;
+					double scale = game.getScale(w, h);
+					double xOffset = game.getXOffset(w, h); 
+					double yOffset = game.getYOffset(w, h);
 
 					// replaces the first ball with a ball whose velocity is based on how far you dragged the mouse
 					Ball b = new Ball(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale);
@@ -119,9 +119,10 @@ class PoolCanvas extends Canvas implements Runnable{
 
 		// TODO: this is a nightmare to look at; need to figure out somewhere else to throw this into and how to fix it
 		if (xPressed >= 0){
-			double scale = Math.min((double)w/game.w, (double)h/game.h); // recalculates scaling to account for isotropic scaling
-			double xOffset = (w - game.w*scale)/2; 
-			double yOffset = (h - game.h*scale)/2;
+			// gets scale and offsets to account for isotropic scaling
+			double scale = game.getScale(w, h);
+			double xOffset = game.getXOffset(w, h); 
+			double yOffset = game.getYOffset(w, h);
 
 			g.setColor(Color.red); g.drawOval(xPressed-(int)(20*scale), yPressed-(int)(20*scale), (int)(40*scale), (int)(40*scale)); // draws where the ball would be placed
 			g.drawLine(xPressed, yPressed, xPressed+(xPressed-xHeld)/2, yPressed+(yPressed-yHeld)/2); // draws the initial velocity vector of the ball

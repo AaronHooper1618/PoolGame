@@ -66,6 +66,44 @@ class GameState {
 	 * @param h the height of the canvas being drawn onto
 	 */
 	public void draw(Graphics g, int w, int h){
-		table.draw(g, w, h);
+		table.draw(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
+	}
+
+	/**
+	 * Determines the factor by which to scale the image when drawing onto
+	 * a canvas of a given width and height.
+	 * 
+	 * @param target_w the width of the canvas being drawn onto
+	 * @param target_h the height of the canvas being drawn onto
+	 * @return         the scaling factor needed to fit the game onto the canvas
+	 */
+	public double getScale(int target_w, int target_h){
+		return Math.min((double)target_w/this.w, (double)target_h/this.h);
+	}
+
+	/**
+	 * Determines the offset on the x-axis needed to center the image onto 
+	 * the canvas after it's scaled isotropically.
+	 * 
+	 * @param target_w the width of the canvas being drawn onto
+	 * @param target_h the height of the canvas being drawn onto
+	 * @return         the offset on the x-axis needed to fit the game onto the canvas
+	 */
+	public double getXOffset(int target_w, int target_h){
+		double scale = this.getScale(target_w, target_h);
+		return (target_w - this.w*scale)/2;
+	}
+
+	/**
+	 * Determines the offset on the x-axis needed to center the image onto 
+	 * the canvas after it's scaled isotropically.
+	 * 
+	 * @param target_w the width of the canvas being drawn onto
+	 * @param target_h the height of the canvas being drawn onto
+	 * @return         the offset on the y-axis needed to fit the game onto the canvas
+	 */
+	public double getYOffset(int target_w, int target_h){
+		double scale = this.getScale(target_w, target_h);
+		return (target_h - this.h*scale)/2;
 	}
 }
