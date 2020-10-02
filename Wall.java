@@ -82,7 +82,7 @@ public class Wall {
 	}
 
 	/**
-	 * Draws the Wall onto a Graphics object. Also supports anisotropic scaling and offsetting.
+	 * Draws the Wall onto a Graphics object. Also supports isotropic scaling and offsetting.
 	 * The parameters of this method should be determined automatically by some other method.
 	 *
 	 * @param       g the Graphics object being drawn onto

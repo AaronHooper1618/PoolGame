@@ -158,7 +158,7 @@ class Ball {
 	}
 
 	/**
-	 * Draws the Ball onto a Graphics object. Also supports anisotropic scaling and offsetting.
+	 * Draws the Ball onto a Graphics object. Also supports isotropic scaling and offsetting.
 	 * The parameters of this method should be determined automatically by some other method.
 	 *
 	 * @param       g the Graphics object being drawn onto
@@ -167,7 +167,7 @@ class Ball {
 	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
 	public void drawBall(Graphics g, double scale, double xOffset, double yOffset){
-		// adjust x, y and r based on scale, xOffset and yOffset for anisotropic scaling
+		// adjust x, y and r based on scale, xOffset and yOffset for isotropic scaling
 		int x = (int)((this.xPos-this.radius)*scale + xOffset);
 		int y = (int)((this.yPos-this.radius)*scale + yOffset);
 		int r = (int)(this.radius * scale);

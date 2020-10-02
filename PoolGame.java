@@ -1,32 +1,31 @@
 import java.awt.*;
 import java.awt.event.*;
 
-// TODO: change the name of this class to PoolGame? it's going to be the file we'll ultimately end up running
-public class Collisions extends Frame {
-	public static void main(String[] args) {new Collisions();}
+public class PoolGame extends Frame {
+	public static void main(String[] args) {new PoolGame();}
 
-	Collisions() {
-		super("Collisions");
+	PoolGame() {
+		super("Pool Game");
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {System.exit(0);}
 		});
 		setSize(800, 600);
-		add("Center", new CollisionCanvas());
+		add("Center", new PoolCanvas());
 		setVisible(true);
 	}
 }
 
-class CollisionCanvas extends Canvas implements Runnable{
+class PoolCanvas extends Canvas implements Runnable{
 	int w, h;
 	int n, xPressed, yPressed;
 	int xHeld, yHeld;
 	long lastFrame;
-	GameState game;
+	TableState game;
 
-	CollisionCanvas() {
+	PoolCanvas() {
 		lastFrame = System.currentTimeMillis();
 		xPressed = -1; yPressed = -1;
-		game = new GameState();
+		game = new TableState();
 
 		Thread u = new Thread(this);
 		u.start();
@@ -38,13 +37,13 @@ class CollisionCanvas extends Canvas implements Runnable{
 					xHeld = e.getX(); yHeld = e.getY();
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
-					// reset the GameState on right mouse button click
-					game = new GameState();
+					// reset the TableState on right mouse button click
+					game = new TableState();
 				}
 			}
 			public void mouseReleased(MouseEvent e){
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
-					// gets scale and offsets to account for anisotropic scaling
+					// gets scale and offsets to account for isotropic scaling
 					double scale = Math.min((double)w/game.w, (double)h/game.h);
 					double xOffset = (w - game.w*scale)/2; 
 					double yOffset = (h - game.h*scale)/2;
@@ -119,7 +118,7 @@ class CollisionCanvas extends Canvas implements Runnable{
 		game.draw(g, w, h);
 
 		if (xPressed >= 0){
-			double scale = Math.min((double)w/game.w, (double)h/game.h); // recalculates scaling to account for anisotropic scaling
+			double scale = Math.min((double)w/game.w, (double)h/game.h); // recalculates scaling to account for isotropic scaling
 			g.setColor(Color.red); g.drawOval(xPressed-(int)(20*scale), yPressed-(int)(20*scale), (int)(40*scale), (int)(40*scale)); // draws where the ball would be placed
 			g.drawLine(xPressed, yPressed, xPressed+(xPressed-xHeld)/2, yPressed+(yPressed-yHeld)/2); // draws the initial velocity vector of the ball
 		}

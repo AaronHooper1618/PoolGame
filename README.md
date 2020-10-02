@@ -6,11 +6,11 @@ SE 4361 group project thing
 This project requires JDK to compile and JRE to run properly.
 
 ### Installation Steps
-1. Compile Collisions.java.
+1. Compile all .java files in the directory with the following command.
 ```bash
-javac Collisions.java
+javac *.java
 ```
-2. Run Collisions.
+2. Run PoolGame.
 ```bash
-java Collisions
+java PoolGame
 ```
