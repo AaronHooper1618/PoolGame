@@ -117,10 +117,22 @@ class PoolCanvas extends Canvas implements Runnable{
 		}
 		game.draw(g, w, h);
 
+		// TODO: this is a nightmare to look at; need to figure out somewhere else to throw this into and how to fix it
 		if (xPressed >= 0){
 			double scale = Math.min((double)w/game.w, (double)h/game.h); // recalculates scaling to account for isotropic scaling
+			double xOffset = (w - game.w*scale)/2; 
+			double yOffset = (h - game.h*scale)/2;
+
 			g.setColor(Color.red); g.drawOval(xPressed-(int)(20*scale), yPressed-(int)(20*scale), (int)(40*scale), (int)(40*scale)); // draws where the ball would be placed
 			g.drawLine(xPressed, yPressed, xPressed+(xPressed-xHeld)/2, yPressed+(yPressed-yHeld)/2); // draws the initial velocity vector of the ball
+
+			// determines where the collision point of this ball would be
+			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
+			double[] pos = game.nextCollisionPoint(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale, xVel, yVel);
+			double xPos = pos[0]*scale + xOffset; double yPos = pos[1]*scale + yOffset;
+
+			// draws where the ball would be at that collision point
+			g.drawOval((int)(xPos-(20*scale)), (int)(yPos-(20*scale)), (int)(40*scale), (int)(40*scale));
 		}
 	}
 }

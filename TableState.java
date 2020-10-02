@@ -97,6 +97,36 @@ class TableState {
 		}
 	}
 
+	public double[] nextCollisionPoint(int radius, double xPos, double yPos, double xVel, double yVel){
+		// make a ghost ball with the parameters we're looking at
+		Ball ghost = new Ball(radius, xPos, yPos, xVel, yVel);
+
+		// while this ball is inbounds and moving
+		while(ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0){
+			// check if it collides with any of the balls that isn't the cue ball
+			// TODO: ignoring the cue-ball is hard coded in by checking every ball in TableState.balls from index 1 onwards
+			//       this function was written very hastily and needs to be refactored to fix this
+			for (int b = 1; b < balls.length; b++){
+				if (balls[b].distanceFrom(ghost) < 0){
+					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+				}
+			}
+
+			// check if it collides with any of the walls
+			for (int w = 0; w < walls.length; w++){
+				if (walls[w].isBallColliding(ghost) < 0){
+					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+				}
+			}
+
+			// if we didn't return earlier, then move the ball forward 1 millisecond in time
+			ghost.moveTime(0.001, this.friction);
+		}
+
+		// if the ball got out of bounds or stopped moving, return some placeholder value that doesn't matter
+		return new double[]{ -1000, -1000 };
+	}
+
 	/**
 	 * Draws all the Balls and Walls that are in the GameState onto a Graphics object.
 	 * Will also determine scale, xOffset and yOffset in advance in order to handle

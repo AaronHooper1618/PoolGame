@@ -19,7 +19,7 @@ class Ball {
 		this.setColor(0, 0, 200);
 	}
 
-	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // unused
+	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // used in TableState.nextCollisionPoint()
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
@@ -32,7 +32,7 @@ class Ball {
 		this.setColor(0, 0, 200);
 	}
 
-	public Ball(int radius, double xPos, double yPos){ // used in GameState constructor and (tentatively) CollisionCanvas MouseReleased() listener
+	public Ball(int radius, double xPos, double yPos){ // used in TableState constructor and (tentatively) PoolGame MouseReleased() listener
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor(0, 0, 200);
