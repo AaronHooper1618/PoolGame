@@ -20,12 +20,12 @@ class PoolCanvas extends Canvas implements Runnable{
 	int n, xPressed, yPressed;
 	int xHeld, yHeld;
 	long lastFrame;
-	TableState game;
+	GameState game;
 
 	PoolCanvas() {
 		lastFrame = System.currentTimeMillis();
 		xPressed = -1; yPressed = -1;
-		game = new TableState();
+		game = new GameState();
 
 		Thread u = new Thread(this);
 		u.start();
@@ -37,8 +37,8 @@ class PoolCanvas extends Canvas implements Runnable{
 					xHeld = e.getX(); yHeld = e.getY();
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
-					// reset the TableState on right mouse button click
-					game = new TableState();
+					// reset the GameState on right mouse button click
+					game = new GameState();
 				}
 			}
 			public void mouseReleased(MouseEvent e){
@@ -53,7 +53,7 @@ class PoolCanvas extends Canvas implements Runnable{
 					b.xVel = (xPressed - e.getX()) * 5 / scale;
 					b.yVel = (yPressed - e.getY()) * 5 / scale;
 					b.setColor(235, 240, 209);
-					game.replaceBall(0, b);
+					game.table.replaceBall(0, b);
 
 					xPressed = -1; yPressed = -1;
 				}
@@ -128,7 +128,7 @@ class PoolCanvas extends Canvas implements Runnable{
 
 			// determines where the collision point of this ball would be
 			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
-			double[] pos = game.nextCollisionPoint(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale, xVel, yVel);
+			double[] pos = game.table.nextCollisionPoint(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale, xVel, yVel);
 			double xPos = pos[0]*scale + xOffset; double yPos = pos[1]*scale + yOffset;
 
 			// draws where the ball would be at that collision point

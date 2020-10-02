@@ -10,40 +10,12 @@ class TableState {
 	private ArrayList<Ball> balls;
 	private ArrayList<Wall> walls;
 
-	public TableState(){
-		w = 800; h = 600; friction = 200;
-		balls = new ArrayList<Ball>();
-
-		addBall(new Ball(20, 200, 280));
-		this.balls.get(0).setColor(235, 240, 209);
-
-		for(int j = 0; j < 6; j++){
-			for(int k = 0; k < j; k++){
-				addBall(new Ball(20, 400+j*37, 300+k*40-j*20));
-			}
-		}
-
-		walls = new ArrayList<Wall>();
-		// bounding walls
-		addWall(new Wall(0, 0, 0, 599));
-		addWall(new Wall(0, 599, 799, 599));
-		addWall(new Wall(799, 599, 799, 0));
-		addWall(new Wall(799, 0, 0, 0));
-
-		// angled wall
-		addWall(new Wall(599, 599, 799, 300));
-
-		// left box
-		addWall(new Wall(200, 400, 200, 480));
-		addWall(new Wall(200, 480, 280, 480));
-		addWall(new Wall(280, 480, 280, 400));
-		addWall(new Wall(280, 400, 200, 400));
-
-		// right box
-		addWall(new Wall(400, 400, 480, 400));
-		addWall(new Wall(480, 400, 480, 480));
-		addWall(new Wall(480, 480, 400, 480));
-		addWall(new Wall(400, 480, 400, 400));
+	public TableState(int w, int h){
+		this.w = w; this.h = h; 
+		this.friction = 200;
+		
+		this.balls = new ArrayList<Ball>();
+		this.walls = new ArrayList<Wall>();
 	}
 
 	/** 
