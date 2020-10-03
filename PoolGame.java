@@ -44,12 +44,9 @@ class PoolCanvas extends Canvas implements Runnable{
 			}
 			public void mouseReleased(MouseEvent e){
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
-					// replaces the first ball with a ball whose velocity is based on how far you dragged the mouse
-					Ball b = new Ball(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale);
-					b.xVel = (xPressed - e.getX()) * 5 / scale;
-					b.yVel = (yPressed - e.getY()) * 5 / scale;
-					b.setColor(235, 240, 209);
-					game.table.replaceBall(0, b);
+					// sets the velocity of the first ball in game.table based on how far you dragged the mouse
+					game.table.getBall(0).xVel = (xPressed - e.getX()) * 5 / scale;
+					game.table.getBall(0).yVel = (yPressed - e.getY()) * 5 / scale;
 
 					xPressed = -1; yPressed = -1;
 				}
@@ -124,20 +121,11 @@ class PoolCanvas extends Canvas implements Runnable{
 		}
 		game.draw(g, w, h);
 
-		// TODO: this is a nightmare to look at; need to figure out somewhere else to throw this into and how to fix it
+		// if the mouse button is being held, draw move preview
 		if (xPressed >= 0){
 			// gets velocity of ball assuming you released the mouse right now
 			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
-
-			g.setColor(Color.red); g.drawOval(xPressed-(int)(20*scale), yPressed-(int)(20*scale), (int)(40*scale), (int)(40*scale)); // draws where the ball would be placed
-			g.drawLine(xPressed, yPressed, xPressed+(int)xVel/10, yPressed+(int)yVel/10); // draws the initial velocity vector of the ball
-
-			// determines where the collision point of this ball would be
-			double[] pos = game.table.nextCollisionPoint(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale, xVel, yVel);
-			double xPos = pos[0]*scale + xOffset; double yPos = pos[1]*scale + yOffset;
-
-			// draws where the ball would be at that collision point
-			g.drawOval((int)(xPos-(20*scale)), (int)(yPos-(20*scale)), (int)(40*scale), (int)(40*scale));
+			game.drawMovePreview(g, w, h, xVel, yVel);
 		}
 	}
 }

@@ -161,4 +161,38 @@ class TableState {
 			getWall(i).drawWall(g, scale, xOffset, yOffset);
 		}
 	}
+
+	/**
+	 * Draws the velocity vector (scaled down by a factor of 10) as well as the next
+	 * collision point for the cue ball assuming it will have a velocity of (xVel, yVel).
+	 * This method does not draw any of the objects on the table and should be called after TableState.draw().
+	 * Scaling and offset parameters should be set by GameState.drawMovePreview() automatically.
+	 * 
+	 * @param       g the Graphics object being drawn onto
+	 * @param   scale the factor to increase the size of the drawn ball
+	 * @param xOffset the amount of pixels to offset the drawn ball by on the xAxis
+	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
+	 * @param    xVel the velocity along the x-axis the cue ball will be moving at
+	 * @param    yVel the velocity along the y-axis the cue ball will be moving at
+	 */
+	public void drawMovePreview(Graphics g, double scale, double xOffset, double yOffset, double xVel, double yVel){
+		// TODO: it's assumed that the cue ball will be at index 0 in this function. rewrite this to get rid of that assumption?
+		// gets position and radius of cue ball
+		double xPos = this.getBall(0).xPos; double yPos = this.getBall(0).yPos; int radius = this.getBall(0).radius;
+
+		// draws the new velocity vector of the cue ball as a Wall
+		// kinda weird, but we can leverage a lot of the busy work with scaling from Wall.drawWall() this way
+		Wall velocity = new Wall(xPos, yPos, xPos+xVel/10*scale, yPos+yVel/10*scale); velocity.setColor(255, 0, 0);
+		velocity.drawWall(g, scale, xOffset, yOffset);
+
+		// determines where the collision point of the cue ball would be
+		double[] pos = this.nextCollisionPoint(radius, xPos, yPos, xVel, yVel);
+
+		// applies isotropic scaling to that point and the radius of the cue ball
+		double x = pos[0]*scale + xOffset; double y = pos[1]*scale + yOffset;
+		radius = (int)(radius*scale);
+
+		// draws where the cue ball would be at that collision point
+		g.drawOval((int)(x-radius), (int)(y-radius), (int)(2*radius), (int)(2*radius));
+	}
 }

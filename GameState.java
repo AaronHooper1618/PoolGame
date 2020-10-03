@@ -70,6 +70,23 @@ class GameState {
 	}
 
 	/**
+	 * Draws the velocity vector (scaled down by a factor of 10) as well as the next
+	 * collision point for the cue ball assuming it will have a velocity of (xVel, yVel).
+	 * This method does not draw any of the objects on the table and should be called after GameState.draw().
+	 * 
+	 * @param    g the Graphics object being drawn onto
+	 * @param    w the width of the canvas being drawn onto
+	 * @param    h the height of the canvas being drawn onto
+	 * @param xVel the velocity along the x-axis the cue ball will be moving at
+	 * @param yVel the velocity along the y-axis the cue ball will be moving at
+	 */
+	public void drawMovePreview(Graphics g, int w, int h, double xVel, double yVel){
+		// gets scale factor and offsets for isotropic scaling; throws it at this.table
+		double scale = this.getScale(w, h); double xOffset = this.getXOffset(w, h); double yOffset = this.getYOffset(w, h);
+		table.drawMovePreview(g, scale, xOffset, yOffset, xVel, yVel);
+	}
+
+	/**
 	 * Determines the factor by which to scale the image when drawing onto
 	 * a canvas of a given width and height.
 	 * 
