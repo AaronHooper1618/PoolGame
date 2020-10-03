@@ -17,8 +17,9 @@ public class PoolGame extends Frame {
 
 class PoolCanvas extends Canvas implements Runnable{
 	int w, h;
-	int n, xPressed, yPressed;
+	int xPressed, yPressed;
 	int xHeld, yHeld;
+	double scale, xOffset, yOffset;
 	long lastFrame;
 	GameState game;
 
@@ -43,11 +44,6 @@ class PoolCanvas extends Canvas implements Runnable{
 			}
 			public void mouseReleased(MouseEvent e){
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
-					// gets scale and offsets to account for isotropic scaling
-					double scale = game.getScale(w, h);
-					double xOffset = game.getXOffset(w, h); 
-					double yOffset = game.getYOffset(w, h);
-
 					// replaces the first ball with a ball whose velocity is based on how far you dragged the mouse
 					Ball b = new Ball(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale);
 					b.xVel = (xPressed - e.getX()) * 5 / scale;
@@ -73,6 +69,16 @@ class PoolCanvas extends Canvas implements Runnable{
 		});
 	}
 
+	/**
+	 * Adjusts scale, xOffset and yOffset based on the width and height of this canvas.
+	 * Useful for events dependent on mouse functionality in the event that the window is resized.
+	 */
+	public void calibrateScaling(){
+		scale = game.getScale(w, h);
+		xOffset = game.getXOffset(w, h); 
+		yOffset = game.getYOffset(w, h);
+	}
+
 	// this refreshes the canvas at a given interval
 	// code taken from http://www.learntosolveit.com/java/AnimatedCanvas.html
 	@Override
@@ -90,8 +96,10 @@ class PoolCanvas extends Canvas implements Runnable{
 	//     http://underpop.online.fr/j/java/help/getting-rid-of-flicker-and-tearing-d-graphics-and-animation-java.html.gz
 	// this shouldn't be too much of a detriment on performance, i hope
 	public void update(Graphics g){
-		Image buffer = createImage(getSize().width, getSize().height);
+		w = getSize().width; h = getSize().height; calibrateScaling();
+		Image buffer = createImage(w, h);
 		Graphics bufferG = buffer.getGraphics();
+
 		if (bufferG != null){
 			paint(bufferG); // paint onto the buffer first
 			bufferG.dispose(); // get rid of the graphics object to avoid memory issues 
@@ -103,8 +111,7 @@ class PoolCanvas extends Canvas implements Runnable{
 	}
 
 	public void paint(Graphics g) {
-		// get w, h
-		w = getSize().width; h = getSize().height;
+		w = getSize().width; h = getSize().height; calibrateScaling();
 
 		// figure out how long its been between now and the last frame
 		long currentFrame = System.currentTimeMillis();
@@ -119,16 +126,13 @@ class PoolCanvas extends Canvas implements Runnable{
 
 		// TODO: this is a nightmare to look at; need to figure out somewhere else to throw this into and how to fix it
 		if (xPressed >= 0){
-			// gets scale and offsets to account for isotropic scaling
-			double scale = game.getScale(w, h);
-			double xOffset = game.getXOffset(w, h); 
-			double yOffset = game.getYOffset(w, h);
+			// gets velocity of ball assuming you released the mouse right now
+			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
 
 			g.setColor(Color.red); g.drawOval(xPressed-(int)(20*scale), yPressed-(int)(20*scale), (int)(40*scale), (int)(40*scale)); // draws where the ball would be placed
-			g.drawLine(xPressed, yPressed, xPressed+(xPressed-xHeld)/2, yPressed+(yPressed-yHeld)/2); // draws the initial velocity vector of the ball
+			g.drawLine(xPressed, yPressed, xPressed+(int)xVel/10, yPressed+(int)yVel/10); // draws the initial velocity vector of the ball
 
 			// determines where the collision point of this ball would be
-			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
 			double[] pos = game.table.nextCollisionPoint(20, (xPressed-xOffset)/scale, (yPressed-yOffset)/scale, xVel, yVel);
 			double xPos = pos[0]*scale + xOffset; double yPos = pos[1]*scale + yOffset;
 
