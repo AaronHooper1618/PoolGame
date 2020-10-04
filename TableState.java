@@ -111,6 +111,9 @@ class TableState {
 				}
 			}
 
+			// make a backup of the ball for later
+			Ball backup = new Ball(0, getBall(i).xPos, getBall(i).yPos, getBall(i).xVel, getBall(i).yVel);
+
 			// shuffle the wall ordering around
 			int[] wall_order = new int[walls.size()];
 			for (int j = 0; j < wall_order.length; j++) {wall_order[j] = j;}
@@ -121,8 +124,17 @@ class TableState {
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
 
+			boolean in_pocket = false;
 			for(int p = 0; p < pockets.size(); p++){
+				in_pocket = in_pocket || getPocket(p).ballInPocket(getBall(i)); // keep track of if the ball is in a pocket or not after handling wall collisions
 				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
+			}
+
+			if (!in_pocket && getBall(i).sunk){ // if the ball's not in a pocket even though it's sunk...
+				// ...revert the position and velocity back to what it was before this step via the backup Ball we made earlier
+				//    inaccurate but strict way to ensure that the ball stays in the pocket
+				getBall(i).xPos = backup.xPos; getBall(i).yPos = backup.yPos;
+				getBall(i).xVel = backup.xVel; getBall(i).yVel = backup.xVel;
 			}
 		}
 	}
