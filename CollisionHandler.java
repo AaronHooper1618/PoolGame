@@ -17,7 +17,7 @@ public class CollisionHandler {
 	public static void handleBallCollisions(Ball a, Ball b, double friction, double cor){
 		double distance = a.distanceFrom(b);
 		
-		if (distance < 0){
+		if (distance < 0 && a.sunk == b.sunk){
 			// add the distance lost in distanceBetween() back
 			// intended effect of this is to make collisions less likely
 			// but if they do happen, the balls ACTUALLY won't be colliding anymore
@@ -100,7 +100,8 @@ public class CollisionHandler {
 	 */
 	public static void handleWallCollisions(Ball ball, Wall wall, double friction, double cor){
 		double distance = wall.isBallColliding(ball);
-		if (distance < 0) {
+		
+		if (distance < 0 && ball.sunk == wall.sunk) {
 			// if we're more than a.radius into the wall, we might as well be on the other side of it
 			// so add 2*a.radius and try to move that distance instead
 			// effectively makes the walls have 2-way collision rather than 1-way

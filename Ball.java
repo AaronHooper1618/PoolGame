@@ -8,6 +8,7 @@ class Ball {
 	public final double mass;
 	public double xPos, yPos;
 	public double xVel, yVel;
+	public boolean sunk;
 	private int r, g, b;
 
 	// TODO: this is way too many constructors lol
@@ -17,6 +18,7 @@ class Ball {
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
 		this.setColor(0, 0, 200);
+		this.sunk = false;
 	}
 
 	public Ball(int radius, double xPos, double yPos, double xVel, double yVel){ // used in TableState.nextCollisionPoint()
@@ -24,18 +26,21 @@ class Ball {
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
 		this.setColor(0, 0, 200);
+		this.sunk = false;
 	}
 	
 	public Ball(int radius, double mass, double xPos, double yPos){ // unused
 		this.radius = radius; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor(0, 0, 200);
+		this.sunk = false;
 	}
 
 	public Ball(int radius, double xPos, double yPos){ // used in TableState constructor and (tentatively) PoolGame MouseReleased() listener
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor(0, 0, 200);
+		this.sunk = false;
 	}
 
 	/**

@@ -8,6 +8,7 @@ public class Wall {
 	public final double x2, y2; // second endpoint
 	public final double length;
 	public final double angle;
+	public final boolean sunk;
 	private int r, g, b;
 
 	/**
@@ -25,6 +26,28 @@ public class Wall {
 		double dx = this.x2 - this.x1; double dy = this.y2 - this.y1;
 		this.length = Math.sqrt(dx*dx + dy*dy);
 		this.angle = Math.atan2(dy, dx);
+
+		this.sunk = false;
+	}
+
+	/**
+	 * Creates a wall which extends across 2 endpoints.
+	 * 
+	 * @param   x1 the x coordinate for the first endpoint
+	 * @param   y1 the y coordinate for the first endpoint
+	 * @param   x2 the x coordinate for the second endpoint
+	 * @param   y2 the y coordinate for the second endpoint
+	 * @param sunk determines whether the wall is sunken or not. only sunken balls are able to collide with sunken walls.
+	 */
+	public Wall(double x1, double y1, double x2, double y2, boolean sunk){
+		this.x1 = x1; this.y1 = y1;
+		this.x2 = x2; this.y2 = y2;
+
+		double dx = this.x2 - this.x1; double dy = this.y2 - this.y1;
+		this.length = Math.sqrt(dx*dx + dy*dy);
+		this.angle = Math.atan2(dy, dx);
+
+		this.sunk = sunk;
 	}
 
 	/**
