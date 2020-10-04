@@ -3,7 +3,6 @@ import java.awt.*;
 
 /**
  * Represents a region bounded by walls that a ball can fall and sink into.
- * Balls whose centers are within a Pocket will have their sunk property set to true.
  */
 public class Pocket {
 	private final ArrayList<Wall> walls;
