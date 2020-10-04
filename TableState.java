@@ -182,7 +182,7 @@ class TableState {
 
 		// draws the new velocity vector of the cue ball as a Wall
 		// kinda weird, but we can leverage a lot of the busy work with scaling from Wall.drawWall() this way
-		Wall velocity = new Wall(xPos, yPos, xPos+xVel/10*scale, yPos+yVel/10*scale); velocity.setColor(255, 0, 0);
+		Wall velocity = new Wall(xPos, yPos, xPos+xVel/10, yPos+yVel/10); velocity.setColor(255, 0, 0);
 		velocity.drawWall(g, scale, xOffset, yOffset);
 
 		// determines where the collision point of the cue ball would be
