@@ -17,7 +17,7 @@ public class CollisionHandler {
 	public static void handleBallCollisions(Ball a, Ball b, double friction, double cor){
 		double distance = a.distanceFrom(b);
 		
-		if (distance < 0 && a.sunk == b.sunk){
+		if (distance < 0 && !a.sunk && !b.sunk){
 			// add the distance lost in distanceBetween() back
 			// intended effect of this is to make collisions less likely
 			// but if they do happen, the balls ACTUALLY won't be colliding anymore
@@ -100,7 +100,7 @@ public class CollisionHandler {
 	 */
 	public static void handleWallCollisions(Ball ball, Wall wall, double friction, double cor){
 		double distance = wall.isBallColliding(ball);
-		
+
 		if (distance < 0 && ball.sunk == wall.sunk) {
 			// if we're more than a.radius into the wall, we might as well be on the other side of it
 			// so add 2*a.radius and try to move that distance instead
@@ -136,6 +136,18 @@ public class CollisionHandler {
 			// change balls[i]'s velocity accordingly and move it forwards in time
 			ball.xVel = tangentX + normalX; ball.yVel = tangentY + normalY;
 			ball.moveTime(-time, friction);
+		}
+	}
+
+	/**
+	 * Changes the ball's sunken property to true should a ball fall into the pocket.
+	 * 
+	 * @param ball   The ball that we're handling the sunken state of.
+	 * @param pocket The pocket which the ball may have fallen into.
+	 */
+	public static void handlePocketCollisions(Ball ball, Pocket pocket){
+		if (pocket.ballInPocket(ball)){
+			ball.sunk = true;
 		}
 	}
 }

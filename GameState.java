@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.*;
 
 /**
  * Represents the state of a pool game being played.
@@ -34,17 +35,22 @@ class GameState {
 		// angled wall
 		table.addWall(new Wall(599, 599, 799, 300));
 
-		// left box
+		// left box (walls)
 		table.addWall(new Wall(200, 400, 200, 480));
 		table.addWall(new Wall(200, 480, 280, 480));
 		table.addWall(new Wall(280, 480, 280, 400));
 		table.addWall(new Wall(280, 400, 200, 400));
 
-		// right box
-		table.addWall(new Wall(400, 400, 480, 400));
-		table.addWall(new Wall(480, 400, 480, 480));
-		table.addWall(new Wall(480, 480, 400, 480));
-		table.addWall(new Wall(400, 480, 400, 400));
+		// right box (pocket)
+		Wall w1 = new Wall(400, 400, 480, 400, true);
+		Wall w2 = new Wall(480, 400, 480, 480, true);
+		Wall w3 = new Wall(480, 480, 400, 480, true);
+		Wall w4 = new Wall(400, 480, 400, 400, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+
+		// adds Pocket based on walls from right box
+		ArrayList<Wall> p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4));
+		table.addPocket(new Pocket(p));
 	}
 
 	/**

@@ -9,6 +9,7 @@ class TableState {
 	private final double friction;
 	private ArrayList<Ball> balls;
 	private ArrayList<Wall> walls;
+	private ArrayList<Pocket> pockets;
 
 	public TableState(int w, int h){
 		this.w = w; this.h = h; 
@@ -16,6 +17,7 @@ class TableState {
 		
 		this.balls = new ArrayList<Ball>();
 		this.walls = new ArrayList<Wall>();
+		this.pockets = new ArrayList<Pocket>();
 	}
 
 	/** 
@@ -37,6 +39,15 @@ class TableState {
 	}
 
 	/** 
+	 * Adds a new pocket onto the table. 
+	 * 
+	 * @param pocket The pocket that we're going to add to the table.
+	 */
+	public void addPocket(Pocket pocket){
+		this.pockets.add(pocket);
+	}
+
+	/** 
 	 * Adds a new ball onto the table. 
 	 * 
 	 * @param i The index of the ball we're trying to get.
@@ -54,6 +65,16 @@ class TableState {
 	 */
 	public Wall getWall(int i){
 		return this.walls.get(i);
+	}
+
+	/** 
+	 * Gets a pocket from the table. 
+	 * 
+	 * @param i The index of the pocket we're trying to get.
+	 * @return  The ith pocket in this.pockets.
+	 */
+	public Pocket getPocket(int i){
+		return this.pockets.get(i);
 	}
 
 	/**
@@ -98,6 +119,10 @@ class TableState {
 			for(int w = 0; w < wall_order.length; w++){
 				int j = wall_order[w];
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
+			}
+
+			for(int p = 0; p < pockets.size(); p++){
+				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
 			}
 		}
 	}
@@ -153,6 +178,10 @@ class TableState {
 	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
 	public void draw(Graphics g, double scale, double xOffset, double yOffset){
+		for (int i = 0; i < pockets.size(); i++){
+			getPocket(i).drawPocket(g, scale, xOffset, yOffset);
+		}
+
 		for (int i = 0; i < balls.size(); i++) {
 			getBall(i).drawBall(g, scale, xOffset, yOffset);
 		}
