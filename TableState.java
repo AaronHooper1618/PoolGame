@@ -89,7 +89,7 @@ class TableState {
 
 	/**
 	 * Moves all the Balls around a certain amount of time.
-	 * Also handles inter-ball collisions and wall collisions for each of the balls as they move.
+	 * Also handles inter-ball collisions, wall collisions and pocket detection for each of the balls as they move.
 	 * 
 	 * @param time the amount of time, in seconds, that all the balls are moved forward
 	 */
@@ -142,7 +142,7 @@ class TableState {
 	// TODO: maybe change the parameters to (Ball ball, double xVel, double yVel)?
 	/**
 	 * Determines where a ball of a given radius at a certain position with a certain velocity
-	 * will collide with some other wall or ball on the table.
+	 * will collide with some other wall or ball or sink into some other pocket on the table.
 	 * 
 	 * @param radius the radius of the ball
 	 * @param   xPos the x position of the ball
@@ -194,7 +194,7 @@ class TableState {
 	}
 
 	/**
-	 * Draws all the Balls and Walls that are in the TableState onto a Graphics object.
+	 * Draws all the Balls, Walls and Pockets that are in the TableState onto a Graphics object.
 	 * Scaling and offset parameters should be set by GameState.draw() automatically.
 	 * 
 	 * @param       g the Graphics object being drawn onto

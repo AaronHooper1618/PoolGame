@@ -1,11 +1,11 @@
 /**
- * Utility class used to resolve collisions that occur between Balls and Walls.
+ * Utility class used to resolve collisions that occur between Balls, Walls and Pockets.
  * The methods here handle both collision detection and collision resolution.
- * The collision handling methods here can and will modify the Balls' velocities and positions that you put into them.
+ * The collision handling methods here can modify the Balls' velocities, positions and sunken states that you put into them.
  */
 public class CollisionHandler {
 	/**
-	 * Adjusts the velocities of two balls assuming they have collided with one another.
+	 * Adjusts the velocities of two non-sunken balls assuming they have collided with one another.
 	 * Can also set a custom coefficient of restitution (ratio of final over initial velocities) to simulate inelastic collisions.
 	 * This follows the algorithm described in https://imada.sdu.dk/~rolf/Edu/DM815/E10/2dcollisions.pdf.
 	 * 
