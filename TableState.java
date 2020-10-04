@@ -127,6 +127,7 @@ class TableState {
 		}
 	}
 
+	// TODO: maybe change the parameters to (Ball ball, double xVel, double yVel)?
 	/**
 	 * Determines where a ball of a given radius at a certain position with a certain velocity
 	 * will collide with some other wall or ball on the table.
@@ -140,7 +141,10 @@ class TableState {
 	 */
 	public double[] nextCollisionPoint(int radius, double xPos, double yPos, double xVel, double yVel){
 		// make a ghost ball with the parameters we're looking at
+		// also sets the sunken state to the cueball's sunken state
+		//     TODO: cue-ball position is hard-coded in here; refactor to fix this
 		Ball ghost = new Ball(radius, xPos, yPos, xVel, yVel);
+		ghost.sunk = getBall(0).sunk;
 
 		// while this ball is inbounds and moving
 		while(ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0){
@@ -148,15 +152,24 @@ class TableState {
 			// TODO: ignoring the cue-ball is hard coded in by checking every ball in TableState.balls from index 1 onwards
 			//       this function was written very hastily and needs to be refactored to fix this
 			for (int b = 1; b < balls.size(); b++){
-				if (getBall(b).distanceFrom(ghost) < 0){
+				if (getBall(b).distanceFrom(ghost) < 0 && !ghost.sunk && !getBall(b).sunk){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
 				}
 			}
 
 			// check if it collides with any of the walls
 			for (int w = 0; w < walls.size(); w++){
-				if (getWall(w).isBallColliding(ghost) < 0){
+				if (getWall(w).isBallColliding(ghost) < 0 && ghost.sunk == getWall(w).sunk){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+				}
+			}
+
+			// check if it sinks into any of the pockets if the ball isn't sunk already
+			if (!ghost.sunk){
+				for (int p = 0; p < pockets.size(); p++){
+					if (getPocket(p).ballInPocket(ghost)){
+						return new double[]{ ghost.xPos, ghost.yPos }; // return the first sunken into pocket it can find
+					}
 				}
 			}
 
