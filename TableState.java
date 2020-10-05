@@ -9,6 +9,7 @@ class TableState {
 	private final double friction;
 	private ArrayList<Ball> balls;
 	private ArrayList<Wall> walls;
+	private ArrayList<Pocket> pockets;
 
 	public TableState(int w, int h){
 		this.w = w; this.h = h; 
@@ -16,6 +17,7 @@ class TableState {
 		
 		this.balls = new ArrayList<Ball>();
 		this.walls = new ArrayList<Wall>();
+		this.pockets = new ArrayList<Pocket>();
 	}
 
 	/** 
@@ -34,6 +36,15 @@ class TableState {
 	 */
 	public void addWall(Wall wall){
 		this.walls.add(wall);
+	}
+
+	/** 
+	 * Adds a new pocket onto the table. 
+	 * 
+	 * @param pocket The pocket that we're going to add to the table.
+	 */
+	public void addPocket(Pocket pocket){
+		this.pockets.add(pocket);
 	}
 
 	/** 
@@ -56,6 +67,16 @@ class TableState {
 		return this.walls.get(i);
 	}
 
+	/** 
+	 * Gets a pocket from the table. 
+	 * 
+	 * @param i The index of the pocket we're trying to get.
+	 * @return  The ith pocket in this.pockets.
+	 */
+	public Pocket getPocket(int i){
+		return this.pockets.get(i);
+	}
+
 	/**
 	 * Replaces a ball in this.balls with another ball passed in as a parameter.
 	 * 
@@ -68,7 +89,7 @@ class TableState {
 
 	/**
 	 * Moves all the Balls around a certain amount of time.
-	 * Also handles inter-ball collisions and wall collisions for each of the balls as they move.
+	 * Also handles inter-ball collisions, wall collisions and pocket detection for each of the balls as they move.
 	 * 
 	 * @param time the amount of time, in seconds, that all the balls are moved forward
 	 */
@@ -99,12 +120,17 @@ class TableState {
 				int j = wall_order[w];
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
+
+			for(int p = 0; p < pockets.size(); p++){
+				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
+			}
 		}
 	}
 
+	// TODO: maybe change the parameters to (Ball ball, double xVel, double yVel)?
 	/**
 	 * Determines where a ball of a given radius at a certain position with a certain velocity
-	 * will collide with some other wall or ball on the table.
+	 * will collide with some other wall or ball or sink into some other pocket on the table.
 	 * 
 	 * @param radius the radius of the ball
 	 * @param   xPos the x position of the ball
@@ -115,7 +141,10 @@ class TableState {
 	 */
 	public double[] nextCollisionPoint(int radius, double xPos, double yPos, double xVel, double yVel){
 		// make a ghost ball with the parameters we're looking at
+		// also sets the sunken state to the cueball's sunken state
+		//     TODO: cue-ball position is hard-coded in here; refactor to fix this
 		Ball ghost = new Ball(radius, xPos, yPos, xVel, yVel);
+		ghost.sunk = getBall(0).sunk;
 
 		// while this ball is inbounds and moving
 		while(ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0){
@@ -123,15 +152,24 @@ class TableState {
 			// TODO: ignoring the cue-ball is hard coded in by checking every ball in TableState.balls from index 1 onwards
 			//       this function was written very hastily and needs to be refactored to fix this
 			for (int b = 1; b < balls.size(); b++){
-				if (getBall(b).distanceFrom(ghost) < 0){
+				if (getBall(b).distanceFrom(ghost) < 0 && !ghost.sunk && !getBall(b).sunk){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
 				}
 			}
 
 			// check if it collides with any of the walls
 			for (int w = 0; w < walls.size(); w++){
-				if (getWall(w).isBallColliding(ghost) < 0){
+				if (getWall(w).isBallColliding(ghost) < 0 && ghost.sunk == getWall(w).sunk){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+				}
+			}
+
+			// check if it sinks into any of the pockets if the ball isn't sunk already
+			if (!ghost.sunk){
+				for (int p = 0; p < pockets.size(); p++){
+					if (getPocket(p).ballInPocket(ghost)){
+						return new double[]{ ghost.xPos, ghost.yPos }; // return the first sunken into pocket it can find
+					}
 				}
 			}
 
@@ -144,7 +182,7 @@ class TableState {
 	}
 
 	/**
-	 * Draws all the Balls and Walls that are in the TableState onto a Graphics object.
+	 * Draws all the Balls, Walls and Pockets that are in the TableState onto a Graphics object.
 	 * Scaling and offset parameters should be set by GameState.draw() automatically.
 	 * 
 	 * @param       g the Graphics object being drawn onto
@@ -153,6 +191,10 @@ class TableState {
 	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
 	public void draw(Graphics g, double scale, double xOffset, double yOffset){
+		for (int i = 0; i < pockets.size(); i++){
+			getPocket(i).drawPocket(g, scale, xOffset, yOffset);
+		}
+
 		for (int i = 0; i < balls.size(); i++) {
 			getBall(i).drawBall(g, scale, xOffset, yOffset);
 		}
