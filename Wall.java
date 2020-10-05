@@ -62,6 +62,7 @@ public class Wall {
 		this.r = r; this.g = g; this.b = b;
 	}
 
+	// TODO: the value that this method returns isn't entirely consistent. needs to be rectified if we're going to make wall collisions accurate.
 	/**
 	 * Determines if a Ball is colliding with this Wall.
 	 * If this is less than 0, the Ball is colliding with the Wall.
@@ -70,6 +71,14 @@ public class Wall {
 	 * @return     the distance from the wall to the ball's edge
 	 */
 	public double isBallColliding(Ball ball){
+		// determine if the ball is already too far away on either the x-axis or y-axis to even touch the line in the first place
+		// return 1 (not less than 0) if this is the case
+		if (ball.xPos > Math.max(this.x1, this.x2) + ball.radius){return 1;} // too far right
+		if (ball.xPos < Math.min(this.x1, this.x2) - ball.radius){return 1;} // too far left
+
+		if (ball.yPos > Math.max(this.y1, this.y2) + ball.radius){return 1;} // too low
+		if (ball.yPos < Math.min(this.y1, this.y2) - ball.radius){return 1;} // too high
+
 		double a = -this.angle;
 
 		// rotate the wall by -this.angle so its lying on the x-axis
