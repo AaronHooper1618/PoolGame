@@ -48,7 +48,7 @@ class TableState {
 	}
 
 	/** 
-	 * Adds a new ball onto the table. 
+	 * Gets a ball from the table. 
 	 * 
 	 * @param i The index of the ball we're trying to get.
 	 * @return  The ith ball in this.balls.
@@ -58,7 +58,7 @@ class TableState {
 	}
 
 	/** 
-	 * Adds a new wall onto the table. 
+	 * Gets a wall from the table. 
 	 * 
 	 * @param i The index of the wall we're trying to get.
 	 * @return  The ith wall in this.walls.
