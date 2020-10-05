@@ -102,11 +102,6 @@ class TableState {
 		// move the balls
 		for (int b = 0; b < ball_order.length; b++) {
 			int i = ball_order[b];
-			
-			// make a backup of the ball for later
-			Ball backup = new Ball(0, getBall(i).xPos, getBall(i).yPos, getBall(i).xVel, getBall(i).yVel);
-			backup.sunk = getBall(i).sunk;
-
 			getBall(i).moveTime(time, this.friction);
 			
 			// handle collisions between ball i and every other ball
