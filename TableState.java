@@ -127,33 +127,29 @@ class TableState {
 		}
 	}
 
-	// TODO: maybe change the parameters to (Ball ball, double xVel, double yVel)?
 	/**
-	 * Determines where a ball of a given radius at a certain position with a certain velocity
-	 * will collide with some other wall or ball or sink into some other pocket on the table.
+	 * Determines where a particular ball will collide with some other wall or ball or sink
+	 * into some other pocket on the table, provided that it's moving at some given velocity.
 	 * 
-	 * @param radius the radius of the ball
-	 * @param   xPos the x position of the ball
-	 * @param   yPos the y position of the ball
-	 * @param   xVel the speed of the ball along the x axis
-	 * @param   yVel the speed of the ball along the y axis
-	 * @return       an array of doubles containing the x coordinate and y coordinate of the collision point in that order
+	 * @param ball the ball that we're determining the next collision point for
+	 * @param xVel the speed of the ball along the x axis
+	 * @param yVel the speed of the ball along the y axis
+	 * @return     an array of doubles containing the x coordinate and y coordinate of the collision point in that order
 	 */
-	public double[] nextCollisionPoint(int radius, double xPos, double yPos, double xVel, double yVel){
+	public double[] nextCollisionPoint(Ball ball, double xVel, double yVel){
 		// make a ghost ball with the parameters we're looking at
-		// also sets the sunken state to the cueball's sunken state
-		//     TODO: cue-ball position is hard-coded in here; refactor to fix this
-		Ball ghost = new Ball(radius, xPos, yPos, xVel, yVel);
-		ghost.sunk = getBall(0).sunk;
+		// also set the sunken state to the ball's sunken state
+		Ball ghost = new Ball(ball.radius, ball.xPos, ball.yPos, xVel, yVel);
+		ghost.sunk = ball.sunk;
 
-		// while this ball is inbounds and moving
+		// while this ghost ball is inbounds and moving
 		while(ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0){
-			// check if it collides with any of the balls that isn't the cue ball
-			// TODO: ignoring the cue-ball is hard coded in by checking every ball in TableState.balls from index 1 onwards
-			//       this function was written very hastily and needs to be refactored to fix this
-			for (int b = 1; b < balls.size(); b++){
-				if (getBall(b).distanceFrom(ghost) < 0 && !ghost.sunk && !getBall(b).sunk){
-					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+			// check if it collides with any of the balls that isn't itself
+			for (int b = 0; b < balls.size(); b++){
+				if (getBall(b) != ball){
+					if (getBall(b).distanceFrom(ghost) < 0 && !ghost.sunk && !getBall(b).sunk){
+						return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
+					}
 				}
 			}
 
@@ -173,11 +169,11 @@ class TableState {
 				}
 			}
 
-			// if we didn't return earlier, then move the ball forward 1 millisecond in time
+			// if we didn't return earlier, then move the ghost ball forward 1 millisecond in time
 			ghost.moveTime(0.001, this.friction);
 		}
 
-		// if the ball got out of bounds or stopped moving, return some placeholder value that doesn't matter
+		// if the ghost ball got out of bounds or stopped moving, return some placeholder value that doesn't matter
 		return new double[]{ -1000, -1000 };
 	}
 
@@ -228,7 +224,7 @@ class TableState {
 		velocity.drawWall(g, scale, xOffset, yOffset);
 
 		// determines where the collision point of the cue ball would be
-		double[] pos = this.nextCollisionPoint(radius, xPos, yPos, xVel, yVel);
+		double[] pos = this.nextCollisionPoint(this.getBall(0), xVel, yVel);
 
 		// applies isotropic scaling to that point and the radius of the cue ball
 		double x = pos[0]*scale + xOffset; double y = pos[1]*scale + yOffset;
