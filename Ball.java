@@ -36,7 +36,7 @@ class Ball {
 		this.sunk = false;
 	}
 
-	public Ball(int radius, double xPos, double yPos){ // used in TableState constructor and (tentatively) PoolGame MouseReleased() listener
+	public Ball(int radius, double xPos, double yPos){ // used in GameState constructor
 		this.radius = radius; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor(0, 0, 200);
