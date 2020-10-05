@@ -110,6 +110,11 @@ class PoolCanvas extends Canvas implements Runnable{
 	public void paint(Graphics g) {
 		w = getSize().width; h = getSize().height; calibrateScaling();
 
+		// turn the Graphics object into a Graphics2D object, then apply anti-aliasing to it
+		Graphics2D g2d = (Graphics2D)g;
+		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHints(rh);
+
 		// figure out how long its been between now and the last frame
 		long currentFrame = System.currentTimeMillis();
 		double t = (double)(currentFrame - lastFrame)/1000.0;
@@ -119,13 +124,13 @@ class PoolCanvas extends Canvas implements Runnable{
 		for (int i = 0; i < 10; i++){
 			game.moveTime(t/10.0);
 		}
-		game.draw(g, w, h);
+		game.draw(g2d, w, h);
 
 		// if the mouse button is being held, draw move preview
 		if (xPressed >= 0){
 			// gets velocity of ball assuming you released the mouse right now
 			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
-			game.drawMovePreview(g, w, h, xVel, yVel);
+			game.drawMovePreview(g2d, w, h, xVel, yVel);
 		}
 	}
 }
