@@ -121,8 +121,10 @@ class TableState {
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
 
-			for(int p = 0; p < pockets.size(); p++){
-				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
+			if (!getBall(i).sunk){
+				for(int p = 0; p < pockets.size(); p++){
+					CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
+				}
 			}
 		}
 	}
