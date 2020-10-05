@@ -126,17 +126,8 @@ class TableState {
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
 
-			boolean in_pocket = false;
 			for(int p = 0; p < pockets.size(); p++){
-				in_pocket = in_pocket || getPocket(p).ballInPocket(getBall(i)); // keep track of if the ball is in a pocket or not after handling everything else
 				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
-			}
-
-			if (!in_pocket && backup.sunk){ // if the ball's not in a pocket even though it's sunk...
-				// ...revert the position and velocity back to what it was before via the backup ball we made earlier
-				//    inaccurate but strict way to ensure that the ball stays in the pocket
-				getBall(i).xPos = backup.xPos; getBall(i).yPos = backup.yPos;
-				getBall(i).xVel = backup.xVel; getBall(i).yVel = backup.xVel;
 			}
 		}
 	}
