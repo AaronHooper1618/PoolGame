@@ -174,8 +174,7 @@ class TableState {
 		Ball ghost = new Ball(ball.radius, ball.type, ball.xPos, ball.yPos, xVel, yVel);
 		ghost.sunk = ball.sunk;
 
-		// while this ghost ball is inbounds and moving
-		while(ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0){
+		do {
 			// check if it collides with any of the balls that isn't itself
 			for (int b = 0; b < balls.size(); b++){
 				if (getBall(b) != ball){
@@ -203,7 +202,7 @@ class TableState {
 
 			// if we didn't return earlier, then move the ghost ball forward 1 millisecond in time
 			ghost.moveTime(0.001, this.friction);
-		}
+		} while (ghost.xPos >= 0 && ghost.xPos < w && ghost.yPos >= 0 && ghost.yPos < h && ghost.getVelocity() > 0); // while this ghost ball is inbounds and moving
 
 		// if the ghost ball got out of bounds or stopped moving, return some placeholder value that doesn't matter
 		return new double[]{ -1000, -1000 };
@@ -265,5 +264,41 @@ class TableState {
 			// draws where the cue ball would be at that collision point
 			g.drawOval((int)(x-radius), (int)(y-radius), (int)(2*radius), (int)(2*radius));
 		}
+	}
+
+	// TODO: this only works with the cueball at the moment, but we need to be able to replace the 8 ball in some instances.
+	/**
+	 * Draws a preview of where the cue ball would be located, given the user clicks at the coordinate (xPos, yPos) on the canvas.
+	 * Will also return whether the cue ball can be placed in that location or not based on TableState.nextCollisionPoint().
+	 * This method does not draw any of the objects on the table and should be called after GameState.draw().
+	 * Scaling and offset parameters should be set by GameState.drawPlacePreview() automatically.
+	 * 
+	 * @param       g the Graphics object being drawn onto
+	 * @param   scale the factor to increase the size of the drawn ball
+	 * @param xOffset the amount of pixels to offset the drawn ball by on the xAxis
+	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
+	 * @param    xPos x coordinate of where the user would place the cue ball on the canvas
+	 * @param    yPos y coordinate of where the user would place the cue ball on the canvas
+	 */
+	public boolean drawPlacePreview(Graphics g, double scale, double xOffset, double yOffset, double xPos, double yPos){
+		if (this.cueBall != null){
+			double x = (xPos-xOffset)/scale; double y = (yPos-yOffset)/scale;
+			Ball preview = new Ball(this.cueBall.radius, Ball.TYPE_CUEBALL, x, y);
+			double[] collision = this.nextCollisionPoint(preview, 0, 0);
+			
+			int radius = (int)(this.cueBall.radius*scale);
+			g.setColor(Color.red); g.drawOval((int)(xPos-radius), (int)(yPos-radius), (int)(2*radius), (int)(2*radius));
+
+			// keep track of if the cue ball doesn't collide with anything in this spot, as well as if it's in bounds
+			boolean valid = (collision[0] == -1000 && (x>=0 && x<w && y>=0 && y<h));
+
+			if (!valid){
+				g.setColor(new Color(255, 0, 0, 127));
+				g.fillOval((int)(xPos-radius), (int)(yPos-radius), (int)(2*radius), (int)(2*radius));
+			}
+
+			return valid;
+		}
+		return false;
 	}
 }

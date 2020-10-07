@@ -92,6 +92,23 @@ class GameState {
 	}
 
 	/**
+	 * Draws a preview of where the cue ball would be located, given the user clicks at the coordinate (xPos, yPos) on the canvas.
+	 * Will also return whether the cue ball can be placed in that location or not based on TableState.nextCollisionPoint().
+	 * This method does not draw any of the objects on the table and should be called after GameState.draw().
+	 * 
+	 * @param    g the Graphics object being drawn onto
+	 * @param    w the width of the canvas being drawn onto
+	 * @param    h the height of the canvas being drawn onto
+	 * @param xPos x coordinate of where the user would place the cue ball on the canvas
+	 * @param yPos y coordinate of where the user would place the cue ball on the canvas
+	 */
+	public boolean drawPlacePreview(Graphics g, int w, int h, double xPos, double yPos){
+		// gets scale factor and offsets for isotropic scaling; throws it at this.table
+		double scale = this.getScale(w, h); double xOffset = this.getXOffset(w, h); double yOffset = this.getYOffset(w, h);
+		return table.drawPlacePreview(g, scale, xOffset, yOffset, xPos, yPos);
+	}
+
+	/**
 	 * Determines the factor by which to scale the image when drawing onto
 	 * a canvas of a given width and height.
 	 * 
