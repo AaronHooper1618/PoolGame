@@ -7,7 +7,7 @@ import java.util.*;
 class TableState {
 	public final int w, h;
 	private final double friction;
-	private ArrayList<Ball> balls;
+	private ArrayList<Ball> balls; private Ball cueBall; private Ball eightBall;
 	private ArrayList<Wall> walls;
 	private ArrayList<Pocket> pockets;
 
@@ -22,11 +22,23 @@ class TableState {
 
 	/** 
 	 * Adds a new ball onto the table. 
+	 * Will not add another cue ball or 8 ball to the table if one already exists.
 	 * 
 	 * @param ball The ball that we're going to add to the table.
 	 */
 	public void addBall(Ball ball){
-		this.balls.add(ball);
+		if (ball.type == Ball.TYPE_CUEBALL && this.cueBall != null){
+			System.out.println("Cue ball already exists in this TableState.");
+		}
+		else if (ball.type == Ball.TYPE_8BALL && this.eightBall != null){
+			System.out.println("8 ball already exists in this TableState.");
+		}
+		else {
+			// make this ball the cueball/8ball if there isn't one already
+			this.cueBall = (ball.type == Ball.TYPE_CUEBALL) ? ball : this.cueBall;
+			this.eightBall = (ball.type == Ball.TYPE_8BALL) ? ball : this.eightBall;
+			this.balls.add(ball);
+		}
 	}
 
 	/** 
@@ -55,6 +67,24 @@ class TableState {
 	 */
 	public Ball getBall(int i){
 		return this.balls.get(i);
+	}
+
+	/** 
+	 * Gets the cue ball from the table.
+	 * 
+	 * @return The cue ball if it's on the table, null otherwise.
+	 */
+	public Ball getCueBall(){
+		return this.cueBall;
+	}
+
+	/** 
+	 * Gets the 8 ball from the table.
+	 * 
+	 * @return The 8 ball if it's on the table, null otherwise.
+	 */
+	public Ball get8Ball(){
+		return this.eightBall;
 	}
 
 	/** 
@@ -216,23 +246,24 @@ class TableState {
 	 * @param    yVel the velocity along the y-axis the cue ball will be moving at
 	 */
 	public void drawMovePreview(Graphics g, double scale, double xOffset, double yOffset, double xVel, double yVel){
-		// TODO: it's assumed that the cue ball will be at index 0 in this function. rewrite this to get rid of that assumption?
-		// gets position and radius of cue ball
-		double xPos = this.getBall(0).xPos; double yPos = this.getBall(0).yPos; int radius = this.getBall(0).radius;
+		if (this.cueBall != null){
+			// gets position and radius of cue ball
+			double xPos = this.cueBall.xPos; double yPos = this.cueBall.yPos; int radius = this.cueBall.radius;
 
-		// draws the new velocity vector of the cue ball as a Wall
-		// kinda weird, but we can leverage a lot of the busy work with scaling from Wall.drawWall() this way
-		Wall velocity = new Wall(xPos, yPos, xPos+xVel/10, yPos+yVel/10); velocity.setColor(255, 0, 0);
-		velocity.drawWall(g, scale, xOffset, yOffset);
+			// draws the new velocity vector of the cue ball as a Wall
+			// kinda weird, but we can leverage a lot of the busy work with scaling from Wall.drawWall() this way
+			Wall velocity = new Wall(xPos, yPos, xPos+xVel/10, yPos+yVel/10); velocity.setColor(255, 0, 0);
+			velocity.drawWall(g, scale, xOffset, yOffset);
 
-		// determines where the collision point of the cue ball would be
-		double[] pos = this.nextCollisionPoint(this.getBall(0), xVel, yVel);
+			// determines where the collision point of the cue ball would be
+			double[] pos = this.nextCollisionPoint(this.cueBall, xVel, yVel);
 
-		// applies isotropic scaling to that point and the radius of the cue ball
-		double x = pos[0]*scale + xOffset; double y = pos[1]*scale + yOffset;
-		radius = (int)(radius*scale);
+			// applies isotropic scaling to that point and the radius of the cue ball
+			double x = pos[0]*scale + xOffset; double y = pos[1]*scale + yOffset;
+			radius = (int)(radius*scale);
 
-		// draws where the cue ball would be at that collision point
-		g.drawOval((int)(x-radius), (int)(y-radius), (int)(2*radius), (int)(2*radius));
+			// draws where the cue ball would be at that collision point
+			g.drawOval((int)(x-radius), (int)(y-radius), (int)(2*radius), (int)(2*radius));
+		}
 	}
 }
