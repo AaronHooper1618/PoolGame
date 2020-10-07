@@ -85,10 +85,10 @@ class GameState {
 	 * @param xVel the velocity along the x-axis the cue ball will be moving at
 	 * @param yVel the velocity along the y-axis the cue ball will be moving at
 	 */
-	public void drawMovePreview(Graphics g, int w, int h, double xVel, double yVel){
+	public void drawShotPreview(Graphics g, int w, int h, double xVel, double yVel){
 		// gets scale factor and offsets for isotropic scaling; throws it at this.table
 		double scale = this.getScale(w, h); double xOffset = this.getXOffset(w, h); double yOffset = this.getYOffset(w, h);
-		table.drawMovePreview(g, scale, xOffset, yOffset, xVel, yVel);
+		table.drawShotPreview(g, scale, xOffset, yOffset, xVel, yVel);
 	}
 
 	/**

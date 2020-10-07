@@ -130,7 +130,7 @@ class PoolCanvas extends Canvas implements Runnable{
 		if (xPressed >= 0){
 			// gets velocity of ball assuming you released the mouse right now
 			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
-			game.drawMovePreview(g2d, w, h, xVel, yVel);
+			game.drawShotPreview(g2d, w, h, xVel, yVel);
 		}
 	}
 }

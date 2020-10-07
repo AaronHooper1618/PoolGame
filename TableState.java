@@ -236,7 +236,7 @@ class TableState {
 	 * Draws the velocity vector (scaled down by a factor of 10) as well as the next
 	 * collision point for the cue ball assuming it will have a velocity of (xVel, yVel).
 	 * This method does not draw any of the objects on the table and should be called after TableState.draw().
-	 * Scaling and offset parameters should be set by GameState.drawMovePreview() automatically.
+	 * Scaling and offset parameters should be set by GameState.drawShotPreview() automatically.
 	 * 
 	 * @param       g the Graphics object being drawn onto
 	 * @param   scale the factor to increase the size of the drawn ball
@@ -245,7 +245,7 @@ class TableState {
 	 * @param    xVel the velocity along the x-axis the cue ball will be moving at
 	 * @param    yVel the velocity along the y-axis the cue ball will be moving at
 	 */
-	public void drawMovePreview(Graphics g, double scale, double xOffset, double yOffset, double xVel, double yVel){
+	public void drawShotPreview(Graphics g, double scale, double xOffset, double yOffset, double xVel, double yVel){
 		if (this.cueBall != null){
 			// gets position and radius of cue ball
 			double xPos = this.cueBall.xPos; double yPos = this.cueBall.yPos; int radius = this.cueBall.radius;
