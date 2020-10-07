@@ -24,7 +24,7 @@ class Ball {
 		this.radius = radius; this.type = type; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
-		this.setColor(0, 0, 200);
+		this.setColor();
 		this.sunk = false;
 	}
 
@@ -32,21 +32,21 @@ class Ball {
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
-		this.setColor(0, 0, 200);
+		this.setColor();
 		this.sunk = false;
 	}
 	
 	public Ball(int radius, int type, double mass, double xPos, double yPos){ // unused
 		this.radius = radius; this.type = type; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
-		this.setColor(0, 0, 200);
+		this.setColor();
 		this.sunk = false;
 	}
 
 	public Ball(int radius, int type, double xPos, double yPos){ // used in GameState constructor
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
-		this.setColor(0, 0, 200);
+		this.setColor();
 		this.sunk = false;
 	}
 
@@ -60,6 +60,26 @@ class Ball {
 	 */
 	public void setColor(int r, int g, int b){
 		this.r = r; this.g = g; this.b = b;
+	}
+
+	/**
+	 * Sets the color of the ball based on its type.
+	 */
+	public void setColor(){
+		switch(this.type){
+			case Ball.TYPE_CUEBALL:
+				this.setColor(235, 240, 209);
+				break;
+			case Ball.TYPE_RED:
+				this.setColor(200, 7, 23);
+				break;
+			case Ball.TYPE_BLUE:
+				this.setColor(10, 7, 200);
+				break;
+			case Ball.TYPE_8BALL:
+				this.setColor(10, 7, 23);
+				break;
+		}
 	}
 
 	/**

@@ -15,7 +15,6 @@ class GameState {
 
 		// add cueball
 		Ball cue = new Ball(20, Ball.TYPE_CUEBALL, 200, 280);
-		cue.setColor(235, 240, 209);
 		table.addBall(cue);
 
 		// add rack
