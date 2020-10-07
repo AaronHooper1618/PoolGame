@@ -141,7 +141,7 @@ class TableState {
 	public double[] nextCollisionPoint(Ball ball, double xVel, double yVel){
 		// make a ghost ball with the parameters we're looking at
 		// also set the sunken state to the ball's sunken state
-		Ball ghost = new Ball(ball.radius, ball.xPos, ball.yPos, xVel, yVel);
+		Ball ghost = new Ball(ball.radius, ball.type, ball.xPos, ball.yPos, xVel, yVel);
 		ghost.sunk = ball.sunk;
 
 		// while this ghost ball is inbounds and moving

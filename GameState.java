@@ -14,14 +14,14 @@ class GameState {
 		table = new TableState(this.w, this.h);
 
 		// add cueball
-		Ball cue = new Ball(20, 200, 280);
+		Ball cue = new Ball(20, Ball.TYPE_CUEBALL, 200, 280);
 		cue.setColor(235, 240, 209);
 		table.addBall(cue);
 
 		// add rack
 		for(int j = 0; j < 6; j++){
 			for(int k = 0; k < j; k++){
-				table.addBall(new Ball(20, 400+j*37, 300+k*40-j*20));
+				table.addBall(new Ball(20, Ball.TYPE_BLUE, 400+j*37, 300+k*40-j*20));
 			}
 		}
 		
