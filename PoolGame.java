@@ -34,7 +34,16 @@ class PoolCanvas extends Canvas implements Runnable{
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
 					cueBallController.pressMouse(e.getX(), e.getY());
 					cueBallController.holdMouse(e.getX(), e.getY());
-					cueBallController.mode = BallController.MODE_SHOOTING;
+
+					// if the ball's sunk, we're placing it to get it out of the pocket. otherwise, we're gonna shoot it
+					cueBallController.mode = cueBallController.ball.sunk ? BallController.MODE_PLACING : BallController.MODE_SHOOTING;
+
+					// place the ball down if we can and we're in placing mode
+					if (cueBallController.mode == BallController.MODE_PLACING && cueBallController.canPlace){
+						cueBallController.placeBall(scale, xOffset, yOffset);
+						cueBallController.resetMouse();
+						cueBallController.mode = BallController.MODE_NONE;
+					}
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
 					// reset the GameState on right mouse button click
@@ -56,7 +65,7 @@ class PoolCanvas extends Canvas implements Runnable{
 
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
-				// stuff if we need it
+				cueBallController.moveMouse(e.getX(), e.getY());
 			}
 
 			public void mouseDragged(MouseEvent e) {
@@ -125,13 +134,15 @@ class PoolCanvas extends Canvas implements Runnable{
 		}
 		game.draw(g2d, w, h);
 
-		// if the mouse button is being held, draw shot preview
 		if (cueBallController.mode == BallController.MODE_SHOOTING){
 			// gets velocity of ball assuming you released the mouse right now
 			double xVel = cueBallController.xPressed - cueBallController.xHeld;
 			double yVel = cueBallController.yPressed - cueBallController.yHeld;
 			xVel = xVel * 5 / scale; yVel = yVel * 5 / scale;
 			game.drawShotPreview(g2d, w, h, xVel, yVel);
+		}
+		else if (cueBallController.mode == BallController.MODE_PLACING){
+			cueBallController.canPlace = game.drawPlacePreview(g2d, w, h, cueBallController.xMoved, cueBallController.yMoved);
 		}
 	}
 }
