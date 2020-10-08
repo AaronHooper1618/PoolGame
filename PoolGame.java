@@ -35,14 +35,15 @@ class PoolCanvas extends Canvas implements Runnable{
 					cueBallController.pressMouse(e.getX(), e.getY());
 					cueBallController.holdMouse(e.getX(), e.getY());
 
-					// if the ball's sunk, we're placing it to get it out of the pocket. otherwise, we're gonna shoot it
-					cueBallController.mode = cueBallController.ball.sunk ? BallController.MODE_PLACING : BallController.MODE_SHOOTING;
-
 					// place the ball down if we can and we're in placing mode
 					if (cueBallController.mode == BallController.MODE_PLACING && cueBallController.canPlace){
 						cueBallController.placeBall(scale, xOffset, yOffset);
 						cueBallController.resetMouse();
 						cueBallController.mode = BallController.MODE_NONE;
+					}
+					else {
+						// if the ball's sunk, we're placing it to get it out of the pocket. otherwise, we're gonna shoot it
+						cueBallController.mode = cueBallController.ball.sunk ? BallController.MODE_PLACING : BallController.MODE_SHOOTING;
 					}
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
