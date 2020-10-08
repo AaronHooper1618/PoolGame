@@ -17,38 +17,39 @@ public class PoolGame extends Frame {
 
 class PoolCanvas extends Canvas implements Runnable{
 	int w, h;
-	int xPressed, yPressed;
-	int xHeld, yHeld;
-	double scale, xOffset, yOffset;
 	long lastFrame;
-	GameState game;
+	GameState game; 
+	BallController cueBallController;
+	double scale, xOffset, yOffset;
 
 	PoolCanvas() {
 		lastFrame = System.currentTimeMillis();
-		xPressed = -1; yPressed = -1;
 		game = new GameState();
+		cueBallController = new BallController(game.table.getCueBall());
 
-		Thread u = new Thread(this);
-		u.start();
+		Thread u = new Thread(this); u.start();
 
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
-					xPressed = e.getX(); yPressed = e.getY();
-					xHeld = e.getX(); yHeld = e.getY();
+					cueBallController.pressMouse(e.getX(), e.getY());
+					cueBallController.holdMouse(e.getX(), e.getY());
+					cueBallController.mode = BallController.MODE_SHOOTING;
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3) { // Right button
 					// reset the GameState on right mouse button click
 					game = new GameState();
+					cueBallController = new BallController(game.table.getCueBall());
 				}
 			}
 			public void mouseReleased(MouseEvent e){
 				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
-					// sets the velocity of the first ball in game.table based on how far you dragged the mouse
-					game.table.getBall(0).xVel = (xPressed - e.getX()) * 5 / scale;
-					game.table.getBall(0).yVel = (yPressed - e.getY()) * 5 / scale;
-
-					xPressed = -1; yPressed = -1;
+					cueBallController.releaseMouse(e.getX(), e.getY());
+					if (cueBallController.mode == BallController.MODE_SHOOTING){
+						cueBallController.shootBall(scale);
+						cueBallController.resetMouse();
+						cueBallController.mode = BallController.MODE_NONE;
+					}
 				}
 			}
 		});
@@ -59,9 +60,7 @@ class PoolCanvas extends Canvas implements Runnable{
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				if (xPressed > -1 && yPressed > -1) {
-					xHeld = e.getX(); yHeld = e.getY();
-				} 
+				cueBallController.holdMouse(e.getX(), e.getY());
 			}
 		});
 	}
@@ -126,10 +125,12 @@ class PoolCanvas extends Canvas implements Runnable{
 		}
 		game.draw(g2d, w, h);
 
-		// if the mouse button is being held, draw move preview
-		if (xPressed >= 0){
+		// if the mouse button is being held, draw shot preview
+		if (cueBallController.mode == BallController.MODE_SHOOTING){
 			// gets velocity of ball assuming you released the mouse right now
-			double xVel = (xPressed - xHeld) * 5 / scale; double yVel = (yPressed - yHeld) * 5 / scale;
+			double xVel = cueBallController.xPressed - cueBallController.xHeld;
+			double yVel = cueBallController.yPressed - cueBallController.yHeld;
+			xVel = xVel * 5 / scale; yVel = yVel * 5 / scale;
 			game.drawShotPreview(g2d, w, h, xVel, yVel);
 		}
 	}
