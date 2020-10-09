@@ -8,6 +8,8 @@ class TableState {
 	public final int w, h;
 	private final double friction;
 	private ArrayList<Ball> balls; private Ball cueBall; private Ball eightBall;
+	public boolean moving; public int[] movingByType;
+	public int[] sunkByType;
 	private ArrayList<Wall> walls;
 	private ArrayList<Pocket> pockets;
 
@@ -18,6 +20,9 @@ class TableState {
 		this.balls = new ArrayList<Ball>();
 		this.walls = new ArrayList<Wall>();
 		this.pockets = new ArrayList<Pocket>();
+
+		this.moving = false; this.movingByType = new int[4];
+		this.sunkByType = new int[4];
 	}
 
 	/** 
@@ -124,6 +129,9 @@ class TableState {
 	 * @param time the amount of time, in seconds, that all the balls are moved forward
 	 */
 	public void moveTime(double time){
+		this.moving = false; this.movingByType = new int[4];
+		this.sunkByType = new int[4];
+
 		// shuffle the ball ordering around
 		int[] ball_order = new int[balls.size()];
 		for (int i = 0; i < ball_order.length; i++) {ball_order[i] = i;}
@@ -155,6 +163,20 @@ class TableState {
 				for(int p = 0; p < pockets.size(); p++){
 					CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
 				}
+			}
+
+			// update moving to track whether any balls are moving or not
+			//     (good for checking if balls are still prior to taking another shot; avoids iterating through movingByType to check)
+			// update movingByType so we can keep track of whether a ball of its type is moving or not
+			//     (good for detecting fouls in which a player fails to hit a ball in their group first)
+			if (getBall(i).xVel != 0 || getBall(i).yVel != 0){
+				this.movingByType[getBall(i).type] += 1;
+				this.moving = true;
+			}
+
+			// update this.sunk accordingly if the ball is sunk
+			if (getBall(i).sunk){
+				this.sunkByType[getBall(i).type] += 1;
 			}
 		}
 	}
