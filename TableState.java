@@ -165,11 +165,12 @@ class TableState {
 				}
 			}
 
-			// update moving to track whether any balls are moving or not
+			// update moving to track whether any non-sunken balls are moving or not
 			//     (good for checking if balls are still prior to taking another shot; avoids iterating through movingByType to check)
+			//     (waiting for sunken balls to stop moving is tedious though, so ignore those)
 			// update movingByType so we can keep track of whether a ball of its type is moving or not
 			//     (good for detecting fouls in which a player fails to hit a ball in their group first)
-			if (getBall(i).xVel != 0 || getBall(i).yVel != 0){
+			if ((getBall(i).xVel != 0 || getBall(i).yVel != 0) && !getBall(i).sunk){
 				this.movingByType[getBall(i).type] += 1;
 				this.moving = true;
 			}
