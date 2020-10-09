@@ -31,7 +31,7 @@ class PoolCanvas extends Canvas implements Runnable{
 
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) { // Left button
+				if (e.getButton() == MouseEvent.BUTTON1 && !game.table.moving) { // Left button
 					cueBallController.pressMouse(e.getX(), e.getY());
 					cueBallController.holdMouse(e.getX(), e.getY());
 
