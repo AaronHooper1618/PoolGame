@@ -245,12 +245,12 @@ class TableState {
 			getPocket(i).drawPocket(g, scale, xOffset, yOffset);
 		}
 
-		for (int i = 0; i < balls.size(); i++) {
-			getBall(i).drawBall(g, scale, xOffset, yOffset);
-		}
-
 		for (int i = 0; i < walls.size(); i++){
 			getWall(i).drawWall(g, scale, xOffset, yOffset);
+		}
+
+		for (int i = 0; i < balls.size(); i++) {
+			getBall(i).drawBall(g, scale, xOffset, yOffset);
 		}
 	}
 
