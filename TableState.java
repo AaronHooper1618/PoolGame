@@ -240,7 +240,7 @@ class TableState {
 	 * @param xOffset the amount of pixels to offset the drawn ball by on the xAxis
 	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
-	public void draw(Graphics g, double scale, double xOffset, double yOffset){
+	public void drawObjects(Graphics g, double scale, double xOffset, double yOffset){
 		for (int i = 0; i < pockets.size(); i++){
 			getPocket(i).drawPocket(g, scale, xOffset, yOffset);
 		}

@@ -71,7 +71,7 @@ class GameState {
 	 * @param h the height of the canvas being drawn onto
 	 */
 	public void draw(Graphics g, int w, int h){
-		table.draw(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
+		table.drawObjects(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
 	}
 
 	/**
