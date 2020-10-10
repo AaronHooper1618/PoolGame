@@ -25,14 +25,23 @@ class GameState {
 		}
 		
 		// add walls
-		// bounding walls
+		// bounding walls (inner)
 		table.addWall(new Wall(0, 0, 0, 599));
 		table.addWall(new Wall(0, 599, 799, 599));
 		table.addWall(new Wall(799, 599, 799, 0));
 		table.addWall(new Wall(799, 0, 0, 0));
 
-		// angled wall
+		// bounding walls (outer)
+		double t = 20;
+		table.addWall(new Wall(-t, -t, -t, 599+t));
+		table.addWall(new Wall(-t, 599+t, 799+t, 599+t));
+		table.addWall(new Wall(799+t, 599+t, 799+t, -t));
+		table.addWall(new Wall(799+t, -t, -t, -t));
+
+		// angled triangle
 		table.addWall(new Wall(599, 599, 799, 300));
+		table.addWall(new Wall(799, 300, 799, 599));
+		table.addWall(new Wall(799, 599, 599, 599));
 
 		// left box (walls)
 		table.addWall(new Wall(200, 400, 200, 480));
@@ -71,6 +80,11 @@ class GameState {
 	 * @param h the height of the canvas being drawn onto
 	 */
 	public void draw(Graphics g, int w, int h){
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 6, 7}); // wooden frame
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(1, 162, 76), new int[]{0, 1, 2, 3});               // felt playing field
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{8, 9, 10});               // wooden angled triangle
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{11, 12, 13, 14});         // wooden left box
+
 		table.drawObjects(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
 	}
 

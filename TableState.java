@@ -254,6 +254,54 @@ class TableState {
 		}
 	}
 
+	// TODO: this is the exact same code as Pocket.drawPocket(). there's gotta be a smarter way to organize this, but i dont want to make another class to do it...
+	/**
+	 * Fills a polygon on a Graphics object with a given color based on some walls that bound it.
+	 * Scaling and offset parameters should be set by GameState.draw() automatically.
+	 * 
+	 * @param g       the Graphics object being drawn onto
+	 * @param scale   the factor to increase the size of the filled polygon
+	 * @param xOffset the amount of pixels to offset the filled polygon by on the x axis
+	 * @param yOffset the amount of pixels to offset the filled polygon by on the y axis
+	 * @param color   the color the polygon is going to be filled with
+	 * @param walls   the walls that define the boundaries of the polygon
+	 */
+	public void fillPolygon(Graphics g, double scale, double xOffset, double yOffset, Color color, ArrayList<Wall> walls){
+		int nPoints = (walls.size()) * 2;
+		int[] xPoints = new int[nPoints]; int[] yPoints = new int[nPoints];
+
+		for(int i = 0; i < nPoints/2; i++){
+			Wall w = walls.get(i);
+			// adjust x1, y1, x2 and y2 based on scale, xOffset and yOffset for isotropic scaling
+			xPoints[i*2] = (int)(w.x1 * scale + xOffset); xPoints[i*2 + 1] = (int)(w.x2 * scale + xOffset);
+			yPoints[i*2] = (int)(w.y1 * scale + yOffset); yPoints[i*2 + 1] = (int)(w.y2 * scale + yOffset);
+		}
+
+		g.setColor(color);
+		g.fillPolygon(xPoints, yPoints, nPoints);
+	}
+
+	/**
+	 * Fills a polygon on a Graphics object with a given color based on the indices of some walls in this.walls that bound it.
+	 * Scaling and offset parameters should be set by GameState.draw() automatically.
+	 * 
+	 * @param g       the Graphics object being drawn onto
+	 * @param scale   the factor to increase the size of the filled polygon
+	 * @param xOffset the amount of pixels to offset the filled polygon by on the x axis
+	 * @param yOffset the amount of pixels to offset the filled polygon by on the y axis
+	 * @param color   the color the polygon is going to be filled with
+	 * @param indices the index of the walls in this.walls that define the boundaries of the polygon
+	 */
+	public void fillPolygon(Graphics g, double scale, double xOffset, double yOffset, Color color, int[] indices){
+		ArrayList<Wall> w = new ArrayList<Wall>();
+
+		for (int i = 0; i < indices.length; i++){
+			w.add(this.getWall(indices[i]));
+		}
+
+		fillPolygon(g, scale, xOffset, yOffset, color, w);
+	}
+
 	/**
 	 * Draws the velocity vector (scaled down by a factor of 10) as well as the next
 	 * collision point for the cue ball assuming it will have a velocity of (xVel, yVel).
