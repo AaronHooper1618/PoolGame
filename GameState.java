@@ -12,15 +12,24 @@ class GameState {
 	public GameState(){
 		this.w = 800; this.h = 600;
 		table = new TableState(this.w, this.h);
+		int radius = 20;
 
 		// add cueball
-		Ball cue = new Ball(20, Ball.TYPE_CUEBALL, 200, 280);
+		Ball cue = new Ball(radius, Ball.TYPE_CUEBALL, 200, 280);
 		table.addBall(cue);
 
 		// add rack
+		double distance = Math.sqrt(3)*radius; // distance between each column of balls on the rack
+		int reds = 7; int blues = 7; int type;
+
 		for(int j = 0; j < 6; j++){
 			for(int k = 0; k < j; k++){
-				table.addBall(new Ball(20, Ball.TYPE_BLUE, 400+j*37, 300+k*40-j*20));
+				// determine what type of ball is going to be placed in this spot
+				if (j == 3 && k == 1){type = Ball.TYPE_8BALL;} // 8 ball in center of rack
+				else if (Math.random() < (double)(reds)/(reds+blues)){type = Ball.TYPE_RED; reds--;} // pick a red ball based on how many reds and blues are left
+				else {type = Ball.TYPE_BLUE; blues--;} // pick a blue ball if we dont pick a red ball
+
+				table.addBall(new Ball(radius, type, 400+j*distance, 300+k*40-j*20));
 			}
 		}
 		
