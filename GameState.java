@@ -29,7 +29,7 @@ class GameState {
 				else if (Math.random() < (double)(reds)/(reds+blues)){type = Ball.TYPE_RED; reds--;} // pick a red ball based on how many reds and blues are left
 				else {type = Ball.TYPE_BLUE; blues--;} // pick a blue ball if we dont pick a red ball
 
-				table.addBall(new Ball(radius, type, 400+j*distance, 300+k*40-j*20));
+				table.addBall(new Ball(radius, type, 400+j*distance, 300+k*radius*2-j*radius));
 			}
 		}
 		
