@@ -15,7 +15,7 @@ class Ball {
 
 	public double xPos, yPos;
 	public double xVel, yVel;
-	public boolean sunk;
+	public boolean sunk; public double sunkTime;
 	private int r, g, b;
 
 	// TODO: this is way too many constructors lol
@@ -134,6 +134,10 @@ class Ball {
 		// change velocity since friction has affected it, then change xVel and yVel accordingly
 		velocity -= friction*time;
 		this.xVel = velocity*Math.cos(angle); this.yVel = velocity*Math.sin(angle);
+
+		// add to sunkTime if the ball is sunk
+		if (this.sunk) {this.sunkTime += time;}
+		else {this.sunkTime = 0;}
 	}
 
 	/**
@@ -199,17 +203,25 @@ class Ball {
 	 * @param yOffset the amount of pixels to offset the drawn ball by on the yAxis
 	 */
 	public void drawBall(Graphics g, double scale, double xOffset, double yOffset){
-		// adjust x, y and r based on scale, xOffset and yOffset for isotropic scaling
-		int x = (int)((this.xPos-this.radius)*scale + xOffset);
-		int y = (int)((this.yPos-this.radius)*scale + yOffset);
-		int r = (int)(this.radius * scale);
+		// set a parameter based on how long the ball's been sunk
+		double sunkParam = Math.sqrt(Math.max((0.25-this.sunkTime),0) / 0.25);
 
-		// draw the ball
-		Color ballColor = new Color(this.r, this.g, this.b);
-		g.setColor(ballColor); g.fillOval(x, y, r*2+1, r*2+1);
-		g.setColor(Color.black); g.drawOval(x, y, r*2, r*2);
+		// ball should be completely invisible when sunkParam is 0 (happens after 0.25 seconds)
+		// so don't draw it if this is the case
+		if (sunkParam > 0){
+			// adjust x, y and r based on scale, xOffset and yOffset for isotropic scaling
+			int x = (int)((this.xPos-this.radius)*scale + xOffset);
+			int y = (int)((this.yPos-this.radius)*scale + yOffset);
+			int r = (int)(this.radius * scale * (0.8+sunkParam*0.2)); // size of ball affected by sunkParam
 
-		// draws velocity vectors for debugging purposes
-		g.setColor(Color.red); g.drawLine((int)(x+r), (int)(y+r), (int)(x+r+this.xVel/10*scale), (int)(y+r+this.yVel/10*scale));
+			// draw the ball
+			int alpha = (int)(255*sunkParam); // transparency of ball affected by sunkParam
+			Color ballColor = new Color(this.r, this.g, this.b, alpha);
+			g.setColor(ballColor); g.fillOval(x, y, r*2+1, r*2+1);
+			g.setColor(new Color(0, 0, 0, alpha)); g.drawOval(x, y, r*2, r*2);
+
+			// draws velocity vectors for debugging purposes
+			// g.setColor(Color.red); g.drawLine((int)(x+r), (int)(y+r), (int)(x+r+this.xVel/10*scale), (int)(y+r+this.yVel/10*scale));
+		}
 	}
 }
