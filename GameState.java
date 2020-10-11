@@ -7,10 +7,13 @@ import java.util.*;
  */
 class GameState {
 	public final int w, h;
+	public int padding_left, padding_right, padding_top, padding_bottom;
 	public TableState table;
 
 	public GameState(){
 		this.w = 800; this.h = 600;
+		this.padding_top = 50; this.padding_bottom = 50;
+		this.padding_left = 50; this.padding_right = 50;
 		table = new TableState(this.w, this.h);
 		int radius = 20;
 
@@ -140,7 +143,9 @@ class GameState {
 	 * @return         the scaling factor needed to fit the game onto the canvas
 	 */
 	public double getScale(int target_w, int target_h){
-		return Math.min((double)target_w/this.w, (double)target_h/this.h);
+		int w = this.w + this.padding_left + this.padding_right;
+		int h = this.h + this.padding_top + this.padding_bottom;
+		return Math.min((double)target_w/w, (double)target_h/h);
 	}
 
 	/**
@@ -153,7 +158,7 @@ class GameState {
 	 */
 	public double getXOffset(int target_w, int target_h){
 		double scale = this.getScale(target_w, target_h);
-		return (target_w - this.w*scale)/2;
+		return (target_w + (-this.w+this.padding_left-this.padding_right)*scale)/2;
 	}
 
 	/**
@@ -166,6 +171,6 @@ class GameState {
 	 */
 	public double getYOffset(int target_w, int target_h){
 		double scale = this.getScale(target_w, target_h);
-		return (target_h - this.h*scale)/2;
+		return (target_h + (-this.h+this.padding_top-this.padding_bottom)*scale)/2;
 	}
 }
