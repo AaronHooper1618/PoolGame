@@ -110,6 +110,10 @@ class Ball {
 	 * @param friction the rate at which velocity decreases over time (velocity decreases by 1*friction every second)
 	 */
 	public void moveTime(double time, double friction){
+		// add to sunkTime if the ball is sunk
+		if (this.sunk) {this.sunkTime += time;}
+		else {this.sunkTime = 0;}
+
 		// get the velocity and its angle
 		double velocity = this.getVelocity(); double angle = this.getAngle();
 
@@ -134,10 +138,6 @@ class Ball {
 		// change velocity since friction has affected it, then change xVel and yVel accordingly
 		velocity -= friction*time;
 		this.xVel = velocity*Math.cos(angle); this.yVel = velocity*Math.sin(angle);
-
-		// add to sunkTime if the ball is sunk
-		if (this.sunk) {this.sunkTime += time;}
-		else {this.sunkTime = 0;}
 	}
 
 	/**
