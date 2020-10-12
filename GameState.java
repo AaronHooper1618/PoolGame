@@ -56,50 +56,50 @@ class GameState {
 
 		// add pockets
 		// top-left pocket
-		Wall w1 = new Wall(pr, 0, 0, pr, true);
-		Wall w2 = new Wall(0, pr, -pr, 0, true);
-		Wall w3 = new Wall(-pr, 0, 0, -pr, true);
-		Wall w4 = new Wall(0, -pr, pr, 0, true);
+		Wall w1 = new Wall(pr, 0, 0, pr, true, false);
+		Wall w2 = new Wall(0, pr, -pr, 0, true, true);  // the inner walls for each pocket always collide
+		Wall w3 = new Wall(-pr, 0, 0, -pr, true, true); // this is to stop balls from going outside of the pocket in some cases
+		Wall w4 = new Wall(0, -pr, pr, 0, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		ArrayList<Wall> p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
 		// bottom-left pocket
-		w1 = new Wall(0, h-pr, pr, h, true);
-		w2 = new Wall(pr, h, 0, h+pr, true);
-		w3 = new Wall(0, h+pr, -pr, h, true);
-		w4 = new Wall(-pr, h, 0, h-pr, true);
+		w1 = new Wall(0, h-pr, pr, h, true, false);
+		w2 = new Wall(pr, h, 0, h+pr, true, true);
+		w3 = new Wall(0, h+pr, -pr, h, true, true);
+		w4 = new Wall(-pr, h, 0, h-pr, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
 		// bottom-middle pocket
-		w1 = new Wall(mid_w-pd, h, mid_w+pd, h, true);
-		w2 = new Wall(mid_w+pd, h, mid_w+pd, h+pd*2, true);
-		w3 = new Wall(mid_w+pd, h+pd*2, mid_w-pd, h+pd*2, true);
-		w4 = new Wall(mid_w-pd, h+pd*2, mid_w-pd, h, true);
+		w1 = new Wall(mid_w-pd, h, mid_w+pd, h, true, false);
+		w2 = new Wall(mid_w+pd, h, mid_w+pd, h+pd*2, true, true);
+		w3 = new Wall(mid_w+pd, h+pd*2, mid_w-pd, h+pd*2, true, true);
+		w4 = new Wall(mid_w-pd, h+pd*2, mid_w-pd, h, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
 		// bottom-right pocket
-		w1 = new Wall(w-pr, h, w, h-pr, true);
-		w2 = new Wall(w, h-pr, w+pr, h, true);
-		w3 = new Wall(w+pr, h, w, h+pr, true);
-		w4 = new Wall(w, h+pr, w-pr, h, true);
+		w1 = new Wall(w-pr, h, w, h-pr, true, false);
+		w2 = new Wall(w, h-pr, w+pr, h, true, true);
+		w3 = new Wall(w+pr, h, w, h+pr, true, true);
+		w4 = new Wall(w, h+pr, w-pr, h, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
 		// top-right pocket
-		w1 = new Wall(w, pr, w-pr, 0, true);
-		w2 = new Wall(w-pr, 0, w, -pr, true);
-		w3 = new Wall(w, -pr, w+pr, 0, true);
-		w4 = new Wall(w+pr, 0, w, pr, true);
+		w1 = new Wall(w, pr, w-pr, 0, true, false);
+		w2 = new Wall(w-pr, 0, w, -pr, true, true);
+		w3 = new Wall(w, -pr, w+pr, 0, true, true);
+		w4 = new Wall(w+pr, 0, w, pr, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
 		// top-middle pocket
-		w1 = new Wall(mid_w+pd, 0, mid_w-pd, 0, true);
-		w2 = new Wall(mid_w-pd, 0, mid_w-pd, -pd*2, true);
-		w3 = new Wall(mid_w-pd, -pd*2, mid_w+pd, -pd*2, true);
-		w4 = new Wall(mid_w+pd, -pd*2, mid_w+pd, 0, true);
+		w1 = new Wall(mid_w+pd, 0, mid_w-pd, 0, true, false);
+		w2 = new Wall(mid_w-pd, 0, mid_w-pd, -pd*2, true, true);
+		w3 = new Wall(mid_w-pd, -pd*2, mid_w+pd, -pd*2, true, true);
+		w4 = new Wall(mid_w+pd, -pd*2, mid_w+pd, 0, true, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 	}
