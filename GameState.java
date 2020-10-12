@@ -11,66 +11,97 @@ class GameState {
 	public TableState table;
 
 	public GameState(){
-		this.w = 800; this.h = 600;
-		this.padding_top = 50; this.padding_bottom = 50;
-		this.padding_left = 50; this.padding_right = 50;
+		this.w = 224; this.h = 112;
+		this.padding_top = 30; this.padding_bottom = 30;
+		this.padding_left = 30; this.padding_right = 30;
 		table = new TableState(this.w, this.h);
-		int radius = 20;
+		int radius = 3;
 
 		// add cueball
-		Ball cue = new Ball(radius, Ball.TYPE_CUEBALL, 200, 280);
+		Ball cue = new Ball(radius, Ball.TYPE_CUEBALL, 56, 56);
 		table.addBall(cue);
 
 		// add rack
 		double distance = Math.sqrt(3)*radius; // distance between each column of balls on the rack
 		int reds = 7; int blues = 7; int type;
+		int xi = 168; int yi = 56;
 
-		for(int j = 0; j < 6; j++){
-			for(int k = 0; k < j; k++){
+		for(int j = 0; j < 5; j++){
+			for(int k = 0; k <= j; k++){
 				// determine what type of ball is going to be placed in this spot
-				if (j == 3 && k == 1){type = Ball.TYPE_8BALL;} // 8 ball in center of rack
+				if (j == 2 && k == 1){type = Ball.TYPE_8BALL;} // 8 ball in center of rack
 				else if (Math.random() < (double)(reds)/(reds+blues)){type = Ball.TYPE_RED; reds--;} // pick a red ball based on how many reds and blues are left
 				else {type = Ball.TYPE_BLUE; blues--;} // pick a blue ball if we dont pick a red ball
 
-				table.addBall(new Ball(radius, type, 400+j*distance, 300+k*radius*2-j*radius));
+				table.addBall(new Ball(radius, type, xi+j*distance, yi+k*radius*2-j*radius));
 			}
 		}
 		
 		// add walls
+		double mid_w = this.w/2; double pr = 7; double pd = Math.sqrt(2*pr*pr)/2;
 		// bounding walls (inner)
-		table.addWall(new Wall(0, 0, 0, 599));
-		table.addWall(new Wall(0, 599, 799, 599));
-		table.addWall(new Wall(799, 599, 799, 0));
-		table.addWall(new Wall(799, 0, 0, 0));
+		table.addWall(new Wall(0, pr, 0, h-pr));       // TL to BL pocket
+		table.addWall(new Wall(pr, h, mid_w-pd, h));   // BL to BM pocket
+		table.addWall(new Wall(mid_w+pd, h, w-pr, h)); // BM to BR pocket 
+		table.addWall(new Wall(w, h-pr, w, pr));       // BR to TR pocket
+		table.addWall(new Wall(w-pr, 0, mid_w+pd, 0)); // TR to TM pocket
+		table.addWall(new Wall(mid_w-pd, 0, pr, 0));   // TM to TL pocket
 
 		// bounding walls (outer)
-		double t = 20;
-		table.addWall(new Wall(-t, -t, -t, 599+t));
-		table.addWall(new Wall(-t, 599+t, 799+t, 599+t));
-		table.addWall(new Wall(799+t, 599+t, 799+t, -t));
-		table.addWall(new Wall(799+t, -t, -t, -t));
+		double t = 18;
+		table.addWall(new Wall(-t, -t, -t, h+t));
+		table.addWall(new Wall(-t, h+t, w+t, h+t));
+		table.addWall(new Wall(w+t, h+t, w+t, -t));
+		table.addWall(new Wall(w+t, -t, -t, -t));
 
-		// angled triangle
-		table.addWall(new Wall(599, 599, 799, 300));
-		table.addWall(new Wall(799, 300, 799, 599));
-		table.addWall(new Wall(799, 599, 599, 599));
-
-		// left box (walls)
-		table.addWall(new Wall(200, 400, 200, 480));
-		table.addWall(new Wall(200, 480, 280, 480));
-		table.addWall(new Wall(280, 480, 280, 400));
-		table.addWall(new Wall(280, 400, 200, 400));
-
-		// right box (pocket)
-		Wall w1 = new Wall(400, 400, 480, 400, true);
-		Wall w2 = new Wall(480, 400, 480, 480, true);
-		Wall w3 = new Wall(480, 480, 400, 480, true);
-		Wall w4 = new Wall(400, 480, 400, 400, true);
+		// add pockets
+		// top-left pocket
+		Wall w1 = new Wall(pr, 0, 0, pr, true);
+		Wall w2 = new Wall(0, pr, -pr, 0, true);
+		Wall w3 = new Wall(-pr, 0, 0, -pr, true);
+		Wall w4 = new Wall(0, -pr, pr, 0, true);
 		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		ArrayList<Wall> p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 
-		// adds Pocket based on walls from right box
-		ArrayList<Wall> p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4));
-		table.addPocket(new Pocket(p));
+		// bottom-left pocket
+		w1 = new Wall(0, h-pr, pr, h, true);
+		w2 = new Wall(pr, h, 0, h+pr, true);
+		w3 = new Wall(0, h+pr, -pr, h, true);
+		w4 = new Wall(-pr, h, 0, h-pr, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
+
+		// bottom-middle pocket
+		w1 = new Wall(mid_w-pd, h, mid_w+pd, h, true);
+		w2 = new Wall(mid_w+pd, h, mid_w+pd, h+pd*2, true);
+		w3 = new Wall(mid_w+pd, h+pd*2, mid_w-pd, h+pd*2, true);
+		w4 = new Wall(mid_w-pd, h+pd*2, mid_w-pd, h, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
+
+		// bottom-right pocket
+		w1 = new Wall(w-pr, h, w, h-pr, true);
+		w2 = new Wall(w, h-pr, w+pr, h, true);
+		w3 = new Wall(w+pr, h, w, h+pr, true);
+		w4 = new Wall(w, h+pr, w-pr, h, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
+
+		// top-right pocket
+		w1 = new Wall(w, pr, w-pr, 0, true);
+		w2 = new Wall(w-pr, 0, w, -pr, true);
+		w3 = new Wall(w, -pr, w+pr, 0, true);
+		w4 = new Wall(w+pr, 0, w, pr, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
+
+		// top-middle pocket
+		w1 = new Wall(mid_w+pd, 0, mid_w-pd, 0, true);
+		w2 = new Wall(mid_w-pd, 0, mid_w-pd, -pd*2, true);
+		w3 = new Wall(mid_w-pd, -pd*2, mid_w+pd, -pd*2, true);
+		w4 = new Wall(mid_w+pd, -pd*2, mid_w+pd, 0, true);
+		table.addWall(w1); table.addWall(w2); table.addWall(w3); table.addWall(w4);
+		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 	}
 
 	/**
@@ -92,10 +123,8 @@ class GameState {
 	 * @param h the height of the canvas being drawn onto
 	 */
 	public void draw(Graphics g, int w, int h){
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 6, 7}); // wooden frame
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(1, 162, 76), new int[]{0, 1, 2, 3});               // felt playing field
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{8, 9, 10});               // wooden angled triangle
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{11, 12, 13, 14});         // wooden left box
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9}); // wooden frame
+		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});               // felt playing field
 
 		table.drawObjects(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
 	}
