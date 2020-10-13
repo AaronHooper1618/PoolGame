@@ -209,7 +209,7 @@ class TableState {
 
 			// check if it collides with any of the walls
 			for (int w = 0; w < walls.size(); w++){
-				if (getWall(w).isBallColliding(ghost) < 0 && ghost.sunk == getWall(w).sunk){
+				if (getWall(w).isBallColliding(ghost) < 0 && (ghost.sunk == getWall(w).sunk || getWall(w).always)){
 					return new double[]{ ghost.xPos, ghost.yPos }; // return the first collision it can find
 				}
 			}

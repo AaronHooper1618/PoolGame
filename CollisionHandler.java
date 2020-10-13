@@ -101,7 +101,7 @@ public class CollisionHandler {
 	public static void handleWallCollisions(Ball ball, Wall wall, double friction, double cor){
 		double distance = wall.isBallColliding(ball);
 
-		if (distance < 0 && ball.sunk == wall.sunk) {
+		if (distance < 0 && (ball.sunk == wall.sunk || wall.always)) {
 			// if we're more than a.radius into the wall, we might as well be on the other side of it
 			// so add 2*a.radius and try to move that distance instead
 			// effectively makes the walls have 2-way collision rather than 1-way

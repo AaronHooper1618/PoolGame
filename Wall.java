@@ -9,6 +9,7 @@ public class Wall {
 	public final double length;
 	public final double angle;
 	public final boolean sunk;
+	public final boolean always;
 	private int r, g, b;
 
 	/**
@@ -28,18 +29,20 @@ public class Wall {
 		this.angle = Math.atan2(dy, dx);
 
 		this.sunk = false;
+		this.always = false;
 	}
 
 	/**
 	 * Creates a wall which extends across 2 endpoints.
 	 * 
-	 * @param   x1 the x coordinate for the first endpoint
-	 * @param   y1 the y coordinate for the first endpoint
-	 * @param   x2 the x coordinate for the second endpoint
-	 * @param   y2 the y coordinate for the second endpoint
-	 * @param sunk determines whether the wall is sunken or not. only sunken balls are able to collide with sunken walls.
+	 * @param     x1 the x coordinate for the first endpoint
+	 * @param     y1 the y coordinate for the first endpoint
+	 * @param     x2 the x coordinate for the second endpoint
+	 * @param     y2 the y coordinate for the second endpoint
+	 * @param   sunk determines whether the wall is sunken or not. only sunken balls are able to collide with sunken walls.
+	 * @param always determines whether the wall can always be collided against, regardless of whether the ball is sunken or not.
 	 */
-	public Wall(double x1, double y1, double x2, double y2, boolean sunk){
+	public Wall(double x1, double y1, double x2, double y2, boolean sunk, boolean always){
 		this.x1 = x1; this.y1 = y1;
 		this.x2 = x2; this.y2 = y2;
 
@@ -48,6 +51,7 @@ public class Wall {
 		this.angle = Math.atan2(dy, dx);
 
 		this.sunk = sunk;
+		this.always = always;
 	}
 
 	/**
