@@ -318,7 +318,7 @@ class TableState {
 	public void drawShotPreview(Graphics g, double scale, double xOffset, double yOffset, double xVel, double yVel){
 		if (this.cueBall != null){
 			// gets position and radius of cue ball
-			double xPos = this.cueBall.xPos; double yPos = this.cueBall.yPos; int radius = this.cueBall.radius;
+			double xPos = this.cueBall.xPos; double yPos = this.cueBall.yPos; double radius = this.cueBall.radius;
 
 			// draws the new velocity vector of the cue ball as a Wall
 			// kinda weird, but we can leverage a lot of the busy work with scaling from Wall.drawWall() this way
@@ -330,7 +330,7 @@ class TableState {
 
 			// applies isotropic scaling to that point and the radius of the cue ball
 			double x = pos[0]*scale + xOffset; double y = pos[1]*scale + yOffset;
-			radius = (int)(radius*scale);
+			radius = radius*scale;
 
 			// draws where the cue ball would be at that collision point
 			g.drawOval((int)(x-radius), (int)(y-radius), (int)(2*radius), (int)(2*radius));
@@ -357,7 +357,7 @@ class TableState {
 			Ball preview = new Ball(this.cueBall.radius, Ball.TYPE_CUEBALL, x, y);
 			double[] collision = this.nextCollisionPoint(preview, 0, 0);
 			
-			int radius = (int)(this.cueBall.radius*scale);
+			double radius = this.cueBall.radius*scale;
 			g.setColor(Color.red); g.drawOval((int)(xPos-radius), (int)(yPos-radius), (int)(2*radius), (int)(2*radius));
 
 			// keep track of if the cue ball doesn't collide with anything in this spot, as well as if it's in bounds

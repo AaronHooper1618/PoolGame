@@ -4,7 +4,7 @@ import java.awt.*;
  * Represents a ball that can move around in 2-dimensional space.
  */
 class Ball {
-	public final int radius; 
+	public final double radius; 
 	public final double mass;
 
 	public final int type;
@@ -20,7 +20,7 @@ class Ball {
 
 	// TODO: this is way too many constructors lol
 	//       either figure out how to organize this or mark which ones we're using and decide whether to cut the rest
-	public Ball(int radius, int type, double mass, double xPos, double yPos, double xVel, double yVel){  // unused
+	public Ball(double radius, int type, double mass, double xPos, double yPos, double xVel, double yVel){  // unused
 		this.radius = radius; this.type = type; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
@@ -28,7 +28,7 @@ class Ball {
 		this.sunk = false;
 	}
 
-	public Ball(int radius, int type, double xPos, double yPos, double xVel, double yVel){ // used in TableState.nextCollisionPoint()
+	public Ball(double radius, int type, double xPos, double yPos, double xVel, double yVel){ // used in TableState.nextCollisionPoint()
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
@@ -36,14 +36,14 @@ class Ball {
 		this.sunk = false;
 	}
 	
-	public Ball(int radius, int type, double mass, double xPos, double yPos){ // unused
+	public Ball(double radius, int type, double mass, double xPos, double yPos){ // unused
 		this.radius = radius; this.type = type; this.mass = mass;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor();
 		this.sunk = false;
 	}
 
-	public Ball(int radius, int type, double xPos, double yPos){ // used in GameState constructor
+	public Ball(double radius, int type, double xPos, double yPos){ // used in GameState constructor
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor();

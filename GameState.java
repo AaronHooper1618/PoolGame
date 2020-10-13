@@ -15,7 +15,7 @@ class GameState {
 		this.padding_top = 30; this.padding_bottom = 30;
 		this.padding_left = 30; this.padding_right = 30;
 		table = new TableState(this.w, this.h);
-		int radius = 3;
+		double radius = 3.35;
 
 		// add cueball
 		Ball cue = new Ball(radius, Ball.TYPE_CUEBALL, 56, 56);
