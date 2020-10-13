@@ -29,16 +29,17 @@ public class Pocket {
 		int nPoints = (walls.size()+1) * 2;
 		int[] xPoints = new int[nPoints]; int[] yPoints = new int[nPoints];
 		double r = b.radius * 0.6;
-		Wall last_wall = null;
 		Polygon p;
 
 		if (lastCalculatedRadius != r){
+			Wall last_wall = null; int direction = 1;
+
 			// get the xPoints and yPoints for each of the walls in the pocket
 			for(int i = 0; i < nPoints/2; i++){
 				Wall w = this.walls.get(i % this.walls.size());
 				double xa = w.x1; double ya = w.y1;
 				double xb = w.x2; double yb = w.y2;
-				double dx = xb-xa; double dy = yb-ya;
+				double dx = (xb-xa)*direction; double dy = (yb-ya)*direction;
 
 				// calculate how much we'd have to move the wall such that it ends up...
 				double length = Math.sqrt(dx*dx + dy*dy); double lscale = r/length;
@@ -58,13 +59,22 @@ public class Pocket {
 					double[] intersection = Pocket.IntersectionPoint(wall, last_wall);
 					double xi = intersection[0]; double yi = intersection[1];
 
-					// and set the x/y point to that instead of whatever it was before, so there arent any edges sticking out
-					xPoints[i*2] = (int)xi; xPoints[i*2 - 1] = (int)xi;
-					yPoints[i*2] = (int)yi; yPoints[i*2 - 1] = (int)yi;
-				}
+					if (Math.min(xa, xb) <= xi && Math.max(xa, xb) >= xi){ // make sure that intersection point is on this pushed-in wall somewhere first
+						// if so, set the x/y point to the intersection point instead of whatever it was before, so there arent any edges sticking out
+						xPoints[i*2] = (int)xi; xPoints[i*2 - 1] = (int)xi;
+						yPoints[i*2] = (int)yi; yPoints[i*2 - 1] = (int)yi;
 
-				// keep track of the last wall in the pocket that we pushed in
-				last_wall = new Wall(xa, ya, xb, yb);
+						// and keep track of the last wall in the pocket that we pushed in
+						last_wall = new Wall(xa, ya, xb, yb);
+					}
+					else { // otherwise, we've been pushing the walls outwards instead of inwards (oops) and need to invert the direction we push the walls
+						i = 0; direction *= -1; last_wall = null;
+					}
+				}
+				else { // if there isn't a last wall...
+					// just keep track of the last wall in the pocket that we pushed in for now
+					last_wall = new Wall(xa, ya, xb, yb);
+				}
 			}
 
 			// we double count the first wall to calculate intersection points accurately
