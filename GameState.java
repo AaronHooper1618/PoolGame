@@ -121,8 +121,8 @@ class GameState {
 	public void moveTime(double time){
 		table.moveTime(time);
 
-		// change turn as soon as balls start moving
-		if (table.moving && !lastMoving){
+		// change turn as soon as balls stop moving
+		if (!table.moving && lastMoving){
 			turn = (turn+1)%2;
 		}
 
