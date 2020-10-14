@@ -9,10 +9,10 @@ class GameState {
 	public final int w, h;
 	public int padding_left, padding_right, padding_top, padding_bottom;
 	public TableState table; 
-	public boolean lastMoving; public int[] lastMovingByType;
+	public boolean lastMoving; public int[] lastMovingByType; public int[] lastSunkByType;
 
 	public int turn;
-	// TODO: public int[] groups;
+	public int[] groups;
 	// TODO: public boolean foul;
 
 	public GameState(){
@@ -20,10 +20,10 @@ class GameState {
 		this.padding_top = 50; this.padding_bottom = 30;
 		this.padding_left = 30; this.padding_right = 30;
 		table = new TableState(this.w, this.h);
-		lastMoving = table.moving; lastMovingByType = table.movingByType.clone();
+		lastMoving = table.moving; lastMovingByType = table.movingByType.clone(); lastSunkByType = table.sunkByType.clone();
 
 		// set up player state info
-		turn = 0; 
+		turn = 0; groups = new int[]{-1, -1};
 
 		// add cueball
 		double radius = 3.35;
@@ -121,9 +121,25 @@ class GameState {
 	public void moveTime(double time){
 		table.moveTime(time);
 
+		// assign players their ball groups if they sink a ball and don't have groups yet
+		if (groups[turn] == -1){
+			if (this.table.sunkByType[Ball.TYPE_RED] > 0){
+				groups[turn] = Ball.TYPE_RED; 
+				groups[(turn+1)%2] = Ball.TYPE_BLUE;
+			}
+			if (this.table.sunkByType[Ball.TYPE_BLUE] > 0){
+				groups[turn] = Ball.TYPE_BLUE; 
+				groups[(turn+1)%2] = Ball.TYPE_RED;
+			}
+		}
+
 		// change turn as soon as balls stop moving
 		if (!table.moving && lastMoving){
-			turn = (turn+1)%2;
+			// only change turn if the player hasn't sunken a ball in their group
+			if (this.table.sunkByType[groups[turn]] == lastSunkByType[groups[turn]]){
+				turn = (turn+1)%2;
+			}
+		 	lastSunkByType = table.sunkByType.clone();
 		}
 
 		lastMoving = this.table.moving; lastMovingByType = this.table.movingByType.clone();
@@ -142,16 +158,31 @@ class GameState {
 		double scale = getScale(w, h); double xOffset = getXOffset(w, h); double yOffset = getYOffset(w, h);
 
 		// place player turn indicators on screen
-		// TODO: this is all ad-hoc at the moment; maybe rewrite this so it can take in some arbitrary font size somehow
+		// TODO: this is all ad-hoc and really disgusting at the moment; maybe rewrite this so it can take in some arbitrary font size somehow
 		Font UIFont = new Font("Arial", Font.BOLD, (int)(20*scale)); g.setFont(UIFont); 
 		
-		Color p1Color = (this.turn==0 && !this.table.moving) ? Color.black : new Color(0, 0, 0, (int)(0.2*255)); g.setColor(p1Color); // set font color to black if it's p1's turn and the table isn't moving
-		g.drawString("P1", (int)(-19*scale + xOffset), (int)(-25*scale + yOffset));
-		Color p2Color = (this.turn==1 && !this.table.moving) ? Color.black : new Color(0, 0, 0, (int)(0.2*255)); g.setColor(p2Color); // same thing as above but for p2
-		g.drawString("P2", (int)((this.w-5)*scale+xOffset), (int)(-25*scale + yOffset));
+		Color p1Color; // determine what color to make the font for player 1 in the UI
+		switch (this.groups[0]){ // adjust color based on what group of balls they're hitting
+			case Ball.TYPE_RED: p1Color = new Color(200, 7, 23); break;
+			case Ball.TYPE_BLUE: p1Color = new Color(10, 7, 200); break;
+			default: p1Color = Color.black; break;
+		}
+		// change color based on if they're allowed to place/hit the ball at the moment
+		p1Color = (this.turn==0 && !this.table.moving) ? p1Color : new Color(p1Color.getRed(), p1Color.getGreen(), p1Color.getBlue(), (int)(0.4*255)); 
+		g.setColor(p1Color); g.drawString("P1", (int)(-19*scale + xOffset), (int)(-25*scale + yOffset));
+
+		Color p2Color; // determine what color to make the font for player 2 in the UI
+		switch (this.groups[1]){ // adjust color based on what group of balls they're hitting
+			case Ball.TYPE_RED: p2Color = new Color(200, 7, 23); break;
+			case Ball.TYPE_BLUE: p2Color = new Color(10, 7, 200); break;
+			default: p2Color = Color.black; break;
+		}
+		// change color based on if they're allowed to place/hit the ball at the moment
+		p2Color = (this.turn==1 && !this.table.moving) ? p2Color : new Color(p2Color.getRed(), p2Color.getGreen(), p2Color.getBlue(), (int)(0.4*255));
+		g.setColor(p2Color); g.drawString("P2", (int)((this.w-5)*scale+xOffset), (int)(-25*scale + yOffset));
 
 		table.fillPolygon(g, scale, xOffset, yOffset, new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9}); // wooden frame
-		table.fillPolygon(g, scale, xOffset, yOffset, new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});               // felt playing field
+		table.fillPolygon(g, scale, xOffset, yOffset, new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});                   // felt playing field
 
 		table.drawObjects(g, scale, xOffset, yOffset);
 	}
