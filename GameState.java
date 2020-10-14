@@ -8,16 +8,25 @@ import java.util.*;
 class GameState {
 	public final int w, h;
 	public int padding_left, padding_right, padding_top, padding_bottom;
-	public TableState table;
+	public TableState table; 
+	public boolean lastMoving; public int[] lastMovingByType;
+
+	public int turn;
+	// TODO: public int[] groups;
+	// TODO: public boolean foul;
 
 	public GameState(){
 		this.w = 224; this.h = 112;
-		this.padding_top = 30; this.padding_bottom = 30;
+		this.padding_top = 50; this.padding_bottom = 30;
 		this.padding_left = 30; this.padding_right = 30;
 		table = new TableState(this.w, this.h);
-		double radius = 3.35;
+		lastMoving = table.moving; lastMovingByType = table.movingByType.clone();
+
+		// set up player state info
+		turn = 0; 
 
 		// add cueball
+		double radius = 3.35;
 		Ball cue = new Ball(radius, Ball.TYPE_CUEBALL, 56, 56);
 		table.addBall(cue);
 
@@ -111,10 +120,17 @@ class GameState {
 	 */
 	public void moveTime(double time){
 		table.moveTime(time);
+
+		// change turn as soon as balls start moving
+		if (table.moving && !lastMoving){
+			turn = (turn+1)%2;
+		}
+
+		lastMoving = this.table.moving; lastMovingByType = this.table.movingByType.clone();
 	}
 
 	/**
-	 * Draws everything in the GameState onto a Graphics object.
+	 * Draws everything in the GameState onto a Graphics object as well as the UI.
 	 * Will also determine scale, xOffset and yOffset in advance in order to handle
 	 * isotropic scaling based on the width and height of the canvas.
 	 * 
@@ -123,10 +139,21 @@ class GameState {
 	 * @param h the height of the canvas being drawn onto
 	 */
 	public void draw(Graphics g, int w, int h){
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9}); // wooden frame
-		table.fillPolygon(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h), new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});               // felt playing field
+		double scale = getScale(w, h); double xOffset = getXOffset(w, h); double yOffset = getYOffset(w, h);
 
-		table.drawObjects(g, getScale(w, h), getXOffset(w, h), getYOffset(w, h));
+		// place player turn indicators on screen
+		// TODO: this is all ad-hoc at the moment; maybe rewrite this so it can take in some arbitrary font size somehow
+		Font UIFont = new Font("Arial", Font.BOLD, (int)(20*scale)); g.setFont(UIFont); 
+		
+		Color p1Color = (this.turn==0 && !this.table.moving) ? Color.black : new Color(0, 0, 0, (int)(0.2*255)); g.setColor(p1Color); // set font color to black if it's p1's turn and the table isn't moving
+		g.drawString("P1", (int)(-19*scale + xOffset), (int)(-25*scale + yOffset));
+		Color p2Color = (this.turn==1 && !this.table.moving) ? Color.black : new Color(0, 0, 0, (int)(0.2*255)); g.setColor(p2Color); // same thing as above but for p2
+		g.drawString("P2", (int)((this.w-5)*scale+xOffset), (int)(-25*scale + yOffset));
+
+		table.fillPolygon(g, scale, xOffset, yOffset, new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9}); // wooden frame
+		table.fillPolygon(g, scale, xOffset, yOffset, new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});               // felt playing field
+
+		table.drawObjects(g, scale, xOffset, yOffset);
 	}
 
 	/**
