@@ -135,9 +135,11 @@ class GameState {
 
 		// change turn as soon as balls stop moving
 		if (!table.moving && lastMoving){
-			// only change turn if the player hasn't sunken a ball in their group
-			if (this.table.sunkByType[groups[turn]] == lastSunkByType[groups[turn]]){
-				turn = (turn+1)%2;
+			if (groups[turn] != -1){
+				// only change turn if the player hasn't sunken a ball in their group
+				if (this.table.sunkByType[groups[turn]] == lastSunkByType[groups[turn]]){
+					turn = (turn+1)%2;
+				}
 			}
 		 	lastSunkByType = table.sunkByType.clone();
 		}
