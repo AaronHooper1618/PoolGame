@@ -146,6 +146,25 @@ class GameState {
 	}
 
 	/**
+	 * Determines the color that the player text in the UI should be drawn in, based on
+	 * their assigned ball group and whether they can hit/place the cueball right now.
+	 * 
+	 * @param player The player's number (either 0 or 1).
+	 * @return       The color that that player's text should be drawn in.
+	 */
+	private Color getPlayerColor(int player){
+		Color pColor;
+		switch (this.groups[player]){ // adjust color based on what group of balls they're hitting
+			case Ball.TYPE_RED: pColor = new Color(200, 7, 23); break;
+			case Ball.TYPE_BLUE: pColor = new Color(10, 7, 200); break;
+			default: pColor = Color.black; break;
+		}
+		// change color based on if they're allowed to place/hit the ball at the moment
+		pColor = (this.turn==player && !this.table.moving) ? pColor : new Color(pColor.getRed(), pColor.getGreen(), pColor.getBlue(), (int)(0.4*255)); 
+		return pColor;
+	}
+
+	/**
 	 * Draws everything in the GameState onto a Graphics object as well as the UI.
 	 * Will also determine scale, xOffset and yOffset in advance in order to handle
 	 * isotropic scaling based on the width and height of the canvas.
@@ -160,26 +179,8 @@ class GameState {
 		// place player turn indicators on screen
 		// TODO: this is all ad-hoc and really disgusting at the moment; maybe rewrite this so it can take in some arbitrary font size somehow
 		Font UIFont = new Font("Arial", Font.BOLD, (int)(20*scale)); g.setFont(UIFont); 
-		
-		Color p1Color; // determine what color to make the font for player 1 in the UI
-		switch (this.groups[0]){ // adjust color based on what group of balls they're hitting
-			case Ball.TYPE_RED: p1Color = new Color(200, 7, 23); break;
-			case Ball.TYPE_BLUE: p1Color = new Color(10, 7, 200); break;
-			default: p1Color = Color.black; break;
-		}
-		// change color based on if they're allowed to place/hit the ball at the moment
-		p1Color = (this.turn==0 && !this.table.moving) ? p1Color : new Color(p1Color.getRed(), p1Color.getGreen(), p1Color.getBlue(), (int)(0.4*255)); 
-		g.setColor(p1Color); g.drawString("P1", (int)(-19*scale + xOffset), (int)(-25*scale + yOffset));
-
-		Color p2Color; // determine what color to make the font for player 2 in the UI
-		switch (this.groups[1]){ // adjust color based on what group of balls they're hitting
-			case Ball.TYPE_RED: p2Color = new Color(200, 7, 23); break;
-			case Ball.TYPE_BLUE: p2Color = new Color(10, 7, 200); break;
-			default: p2Color = Color.black; break;
-		}
-		// change color based on if they're allowed to place/hit the ball at the moment
-		p2Color = (this.turn==1 && !this.table.moving) ? p2Color : new Color(p2Color.getRed(), p2Color.getGreen(), p2Color.getBlue(), (int)(0.4*255));
-		g.setColor(p2Color); g.drawString("P2", (int)((this.w-5)*scale+xOffset), (int)(-25*scale + yOffset));
+		g.setColor(getPlayerColor(0)); g.drawString("P1", (int)(-19*scale + xOffset), (int)(-25*scale + yOffset));
+		g.setColor(getPlayerColor(1)); g.drawString("P2", (int)((this.w-5)*scale+xOffset), (int)(-25*scale + yOffset));
 
 		table.fillPolygon(g, scale, xOffset, yOffset, new Color(155, 126, 70), new int[]{0, 1, 2, 3, 4, 5, 10, 6, 7, 8, 9}); // wooden frame
 		table.fillPolygon(g, scale, xOffset, yOffset, new Color(1, 162, 76), new int[]{0, 1, 2, 3, 4, 5});                   // felt playing field
