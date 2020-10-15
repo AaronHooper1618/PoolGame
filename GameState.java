@@ -13,7 +13,7 @@ class GameState {
 
 	public int turn;
 	public int[] groups;
-	// TODO: public boolean foul;
+	public boolean foul; public int firstContact;
 
 	public GameState(){
 		this.w = 224; this.h = 112;
@@ -23,7 +23,7 @@ class GameState {
 		lastMoving = table.moving; lastMovingByType = table.movingByType.clone(); lastSunkByType = table.sunkByType.clone();
 
 		// set up player state info
-		turn = 0; groups = new int[]{-1, -1};
+		turn = 0; groups = new int[]{-1, -1}; foul = false; firstContact = -1;
 
 		// add cueball
 		double radius = 3.35;
@@ -113,8 +113,10 @@ class GameState {
 		p = new ArrayList<Wall>(Arrays.asList(w1, w2, w3, w4)); table.addPocket(new Pocket(p));
 	}
 
+	// TODO: should we delegate these responsibilities to other functions?
 	/**
 	 * Moves the game forward a certain amount of time.
+	 * Also responsible for adjusting game state by assigning groups to players, changing turns and keeping track of fouls.
 	 * 
 	 * @param time the amount of time, in seconds, that the game is moved forward
 	 */
@@ -133,18 +135,39 @@ class GameState {
 			}
 		}
 
-		// change turn as soon as balls stop moving
+		// if the cueball was/is moving, we need to keep track of what type of ball it hit first
+		if (lastMovingByType[Ball.TYPE_CUEBALL] != 0 || this.table.movingByType[Ball.TYPE_CUEBALL] != 0){
+			if (firstContact == -1){
+				// if a type of ball wasn't moving before and it is now, the cueball most likely came into contact with it first
+				if (lastMovingByType[Ball.TYPE_RED] == 0 && this.table.movingByType[Ball.TYPE_RED] != 0){firstContact = Ball.TYPE_RED;}
+				else if (lastMovingByType[Ball.TYPE_BLUE] == 0 && this.table.movingByType[Ball.TYPE_BLUE] != 0){firstContact = Ball.TYPE_BLUE;}
+				else if (lastMovingByType[Ball.TYPE_8BALL] == 0 && this.table.movingByType[Ball.TYPE_8BALL] != 0){firstContact = Ball.TYPE_8BALL;}
+			}
+		}
+
+		// our move is over whenever all the balls stop moving
 		if (!table.moving && lastMoving){
+			// now that the move's over, we can determine whether a foul occurred or not
+			// 3 types of fouls are covered
+			if (this.table.sunkByType[Ball.TYPE_CUEBALL] != 0){foul = true;} // 1. we sunk the cueball
+			else if (firstContact == -1){foul = true;} // 2. we didn't hit anything
+			else if (groups[turn] != -1){ // 3. we have an assigned group...
+				if (firstContact != groups[turn]){ // ...and didnt hit a ball from our group first
+					foul = true;
+				}
+			}
+
+			// now to figure out whether we change turns or not
 			if (groups[turn] != -1){ // if the player has an assigned group...
-				// ...only change turn if the player hasn't sunken a ball in their group
-				if (this.table.sunkByType[groups[turn]] == lastSunkByType[groups[turn]]){
+				// ...only change turn if the player hasn't sunken a ball in their group or has committed a foul
+				if (this.table.sunkByType[groups[turn]] == lastSunkByType[groups[turn]] || foul){
 					turn = (turn+1)%2;
 				}
 			}
 			else { // otherwise just change turns normally
 				turn = (turn+1)%2;
 			}
-		 	lastSunkByType = table.sunkByType.clone();
+		 	lastSunkByType = table.sunkByType.clone(); firstContact = -1;
 		}
 
 		lastMoving = this.table.moving; lastMovingByType = this.table.movingByType.clone();
