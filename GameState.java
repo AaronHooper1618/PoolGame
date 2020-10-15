@@ -139,7 +139,8 @@ class GameState {
 		if (lastMovingByType[Ball.TYPE_CUEBALL] != 0 || this.table.movingByType[Ball.TYPE_CUEBALL] != 0){
 			if (firstContact == -1){
 				// if a type of ball wasn't moving before and it is now, the cueball most likely came into contact with it first
-				if (lastMovingByType[Ball.TYPE_RED] == 0 && this.table.movingByType[Ball.TYPE_RED] != 0){firstContact = Ball.TYPE_RED;}
+				if (groups[turn] == -1){firstContact = 0;} // (if we dont have a group assigned to us, the type is irrelevant. just as long as we hit something)
+				else if (lastMovingByType[Ball.TYPE_RED] == 0 && this.table.movingByType[Ball.TYPE_RED] != 0){firstContact = Ball.TYPE_RED;}
 				else if (lastMovingByType[Ball.TYPE_BLUE] == 0 && this.table.movingByType[Ball.TYPE_BLUE] != 0){firstContact = Ball.TYPE_BLUE;}
 				else if (lastMovingByType[Ball.TYPE_8BALL] == 0 && this.table.movingByType[Ball.TYPE_8BALL] != 0){firstContact = Ball.TYPE_8BALL;}
 			}
@@ -151,7 +152,7 @@ class GameState {
 			// 3 types of fouls are covered
 			if (this.table.sunkByType[Ball.TYPE_CUEBALL] != 0){foul = true;} // 1. we sunk the cueball
 			else if (firstContact == -1){foul = true;} // 2. we didn't hit anything
-			else if (groups[turn] != -1){ // 3. we have an assigned group...
+			else if (firstContact != 0){ // 3. we had an assigned group...
 				if (firstContact != groups[turn]){ // ...and didnt hit a ball from our group first
 					foul = true;
 				}
