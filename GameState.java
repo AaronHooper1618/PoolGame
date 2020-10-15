@@ -139,10 +139,11 @@ class GameState {
 		if (lastMovingByType[Ball.TYPE_CUEBALL] != 0 || this.table.movingByType[Ball.TYPE_CUEBALL] != 0){
 			if (firstContact == -1){
 				// if a type of ball wasn't moving before and it is now, the cueball most likely came into contact with it first
-				if (groups[turn] == -1){firstContact = 0;} // (if we dont have a group assigned to us, the type is irrelevant. just as long as we hit something)
-				else if (lastMovingByType[Ball.TYPE_RED] == 0 && this.table.movingByType[Ball.TYPE_RED] != 0){firstContact = Ball.TYPE_RED;}
+				if (lastMovingByType[Ball.TYPE_RED] == 0 && this.table.movingByType[Ball.TYPE_RED] != 0){firstContact = Ball.TYPE_RED;}
 				else if (lastMovingByType[Ball.TYPE_BLUE] == 0 && this.table.movingByType[Ball.TYPE_BLUE] != 0){firstContact = Ball.TYPE_BLUE;}
 				else if (lastMovingByType[Ball.TYPE_8BALL] == 0 && this.table.movingByType[Ball.TYPE_8BALL] != 0){firstContact = Ball.TYPE_8BALL;}
+
+				if (groups[turn] == -1 && firstContact != -1){firstContact = 0;} // (if we dont have a group assigned to us, the type should be irrelevant. just as long as we hit something)
 			}
 		}
 
