@@ -141,13 +141,33 @@ public class CollisionHandler {
 
 	/**
 	 * Changes the ball's sunken property to true should a ball fall into the pocket.
+	 * Also resolves collisions within the boundaries of the pocket.
 	 * 
-	 * @param ball   The ball that we're handling the sunken state of.
-	 * @param pocket The pocket which the ball may have fallen into.
+	 * @param     ball The ball that we're handling the sunken state of.
+	 * @param   pocket The pocket which the ball may have fallen into.
+	 * @param friction the rate at which velocity decreases over time (velocity decreases by 1*friction every second)
+	 * @param      cor The coefficient of restitution (1 for elastic collision; 0 for perfectly inelastic collision).
 	 */
-	public static void handlePocketCollisions(Ball ball, Pocket pocket){
-		if (pocket.ballInPocket(ball)){
-			ball.sunk = true;
+	public static void handlePocketCollisions(Ball ball, Pocket pocket, double friction, double cor){
+		ball.sunk = ball.sunk || pocket.ballInPocket(ball);
+
+		if (ball.sunk){ // if the ball's in a pocket, we need to keep it in there
+			// so we're gonna try to make a wall tangent to the pocket and let handleWallCollisions do the heavy lifting
+			// TODO: this method doesn't work well if the size of the ball and the size of the pocket are fairly close to one another
+
+			// scale the distance from ball to the pocket up such that it's the size of the pocket's radius
+			double distance = pocket.distanceFromPocket(ball.xPos, ball.yPos);
+			double dx = ball.xPos - pocket.xPos; double dy = ball.yPos - pocket.yPos;
+			dx /= distance; dy /= distance; // TODO: what if distance = 0?
+			dx *= pocket.radius; dy *= pocket.radius;
+
+			// we can now get the point where the tangent wall will touch the pocket
+			double x = pocket.xPos + dx; double y = pocket.yPos + dy;
+
+			// get the line running perpendicular to that distance vector and turn it into a wall for the ball to collide with
+			double tx = -dy; double ty = dx;
+			Wall tangent = new Wall(x-tx, y-ty, x+tx, y+ty, true, true);
+			CollisionHandler.handleWallCollisions(ball, tangent, friction, cor);
 		}
 	}
 }
