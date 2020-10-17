@@ -12,6 +12,8 @@ public class Pocket {
 	 * It's recommended that all the Walls in a Pocket should be sunken.
 	 * 
 	 * @param radius the size of the pocket's radius
+	 * @param   xPos the x coordinate of the center of the pocket
+	 * @param   yPos the y coordinate of the center of the pocket
 	 */
 	public Pocket(double radius, double xPos, double yPos){
 		this.radius = radius;
@@ -33,7 +35,7 @@ public class Pocket {
 	 * Determines whether the position of a given ball resides within the pocket.
 	 * 
 	 * @param b the ball in question
-	 * @return true if the ball's position is inside the pocket
+	 * @return  true if the ball's position is inside the pocket
 	 */
 	public boolean ballInPocket(Ball b){
 		if (b.radius > this.radius) { // if the ball's too big, it can't fit in the pocket
