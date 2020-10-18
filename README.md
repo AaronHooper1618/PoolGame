@@ -15,3 +15,6 @@ javac *.java
 jar cfe PoolGame.jar PoolGame *.class
 ```
 3. Run PoolGame.jar.
+```bash
+java -jar PoolGame.jar
+```
