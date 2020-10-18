@@ -18,32 +18,15 @@ class Ball {
 	public boolean sunk; public double sunkTime;
 	private int r, g, b;
 
-	// TODO: this is way too many constructors lol
-	//       either figure out how to organize this or mark which ones we're using and decide whether to cut the rest
-	public Ball(double radius, int type, double mass, double xPos, double yPos, double xVel, double yVel){  // unused
-		this.radius = radius; this.type = type; this.mass = mass;
-		this.xPos = xPos; this.yPos = yPos;
-		this.xVel = xVel; this.yVel = yVel;
-		this.setColor();
-		this.sunk = false;
-	}
-
-	public Ball(double radius, int type, double xPos, double yPos, double xVel, double yVel){ // used in TableState.nextCollisionPoint()
+	public Ball(double radius, int type, double xPos, double yPos, double xVel, double yVel){
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.xVel = xVel; this.yVel = yVel;
 		this.setColor();
 		this.sunk = false;
 	}
-	
-	public Ball(double radius, int type, double mass, double xPos, double yPos){ // unused
-		this.radius = radius; this.type = type; this.mass = mass;
-		this.xPos = xPos; this.yPos = yPos;
-		this.setColor();
-		this.sunk = false;
-	}
 
-	public Ball(double radius, int type, double xPos, double yPos){ // used in GameState constructor
+	public Ball(double radius, int type, double xPos, double yPos){
 		this.radius = radius; this.type = type; this.mass = 50.0;
 		this.xPos = xPos; this.yPos = yPos;
 		this.setColor();
