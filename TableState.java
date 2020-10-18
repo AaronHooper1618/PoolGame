@@ -352,7 +352,12 @@ class TableState {
 		if (this.cueBall != null){
 			double x = (xPos-xOffset)/scale; double y = (yPos-yOffset)/scale;
 			Ball preview = new Ball(this.cueBall.radius, Ball.TYPE_CUEBALL, x, y);
-			double[] collision = this.nextCollisionPoint(preview, 0, 0);
+
+			double cueX = this.cueBall.xPos; double cueY = this.cueBall.yPos; // make a backup of the cueball's position
+			this.cueBall.xPos = -1000; this.cueBall.yPos = -1000;             // move the cueball somewhere we shouldn't be able to place it
+			double[] collision = this.nextCollisionPoint(preview, 0, 0);      // now we can check if this placement collides with anything except the cueball
+			this.cueBall.xPos = cueX; this.cueBall.yPos = cueY;               // and restore the cueball's position afterwards
+			                                                                  // kinda hacky, but it works
 			
 			double radius = this.cueBall.radius*scale;
 			g.setColor(Color.red); g.drawOval((int)(xPos-radius), (int)(yPos-radius), (int)(2*radius), (int)(2*radius));
