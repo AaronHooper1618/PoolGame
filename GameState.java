@@ -46,7 +46,7 @@ class GameState {
 		}
 		
 		// add walls
-		double mid_w = this.w/2; double pr = 6;
+		double mid_w = this.w/2; double pr = 6.65;
 		// bounding walls (inner)
 		table.addWall(new Wall(0, pr, 0, h-pr));       // TL to BL pocket
 		table.addWall(new Wall(pr, h, mid_w-pr, h));   // BL to BM pocket
