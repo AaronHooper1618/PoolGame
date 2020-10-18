@@ -8,8 +8,7 @@ public class Wall {
 	public final double x2, y2; // second endpoint
 	public final double length;
 	public final double angle;
-	public final boolean sunk;
-	public final boolean always;
+	public final boolean sunk, always; // TODO: are these necessary now that pockets aren't made up of walls anymore?
 	private int r, g, b;
 
 	/**

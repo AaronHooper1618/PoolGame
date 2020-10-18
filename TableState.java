@@ -159,10 +159,8 @@ class TableState {
 				CollisionHandler.handleWallCollisions(getBall(i), getWall(j), this.friction, 0.95);
 			}
 
-			if (!getBall(i).sunk){
-				for(int p = 0; p < pockets.size(); p++){
-					CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p));
-				}
+			for(int p = 0; p < pockets.size(); p++){
+				CollisionHandler.handlePocketCollisions(getBall(i), getPocket(p), this.friction, 0.95);
 			}
 
 			// update moving to track whether any non-sunken balls are moving or not
@@ -254,7 +252,6 @@ class TableState {
 		}
 	}
 
-	// TODO: this is the exact same code as Pocket.drawPocket(). there's gotta be a smarter way to organize this, but i dont want to make another class to do it...
 	/**
 	 * Fills a polygon on a Graphics object with a given color based on some walls that bound it.
 	 * Scaling and offset parameters should be set by GameState.draw() automatically.
