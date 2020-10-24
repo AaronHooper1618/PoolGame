@@ -112,8 +112,16 @@ public class BallController {
 	 * @return          An array of doubles containing the resultant velocity in the x direction and the y direction, in that order
 	 */
 	public double[] getShotSpeed(double scale, double xPressed, double yPressed, double xReleased, double yReleased){
-		double xVel = (xPressed - xReleased) * 5 / scale;
-		double yVel = (yPressed - yReleased) * 5 / scale;
+		double dx = (xPressed - xReleased) / scale;
+		double dy = (yPressed - yReleased) / scale;
+		double distance = Math.sqrt(dx*dx + dy*dy);
+
+		double speed = Math.atan(distance); // put the dragged distance into atan (a function which converges toward some limit)
+		speed /= (Math.PI/2); // limit of atan is pi/2, so this normalizes it
+		speed *= 1500; // and we can set the limit to 1500 now instead
+
+		double xVel = (distance == 0) ? 0 : (dx * Math.sqrt(speed / distance));
+		double yVel = (distance == 0) ? 0 : (dy * Math.sqrt(speed / distance));
 
 		return new double[]{xVel, yVel};
 	}
