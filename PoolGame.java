@@ -137,9 +137,8 @@ class PoolCanvas extends Canvas implements Runnable{
 
 		if (cueBallController.mode == BallController.MODE_SHOOTING){
 			// gets velocity of ball assuming you released the mouse right now
-			double xVel = cueBallController.xPressed - cueBallController.xHeld;
-			double yVel = cueBallController.yPressed - cueBallController.yHeld;
-			xVel = xVel * 5 / scale; yVel = yVel * 5 / scale;
+			double[] vel = cueBallController.getShotSpeed(scale, cueBallController.xPressed, cueBallController.yPressed, cueBallController.xHeld, cueBallController.yHeld);
+			double xVel = vel[0]; double yVel = vel[1];
 			game.drawShotPreview(g2d, w, h, xVel, yVel);
 		}
 		else if (cueBallController.mode == BallController.MODE_PLACING){

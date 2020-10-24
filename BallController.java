@@ -83,8 +83,8 @@ public class BallController {
 	 * @param scale Ratio between the size of the canvas and the size of the GameState the ball is in.
 	 */
 	public void shootBall(double scale){
-		ball.xVel = (this.xPressed - this.xReleased) * 5 / scale;
-		ball.yVel = (this.yPressed - this.yReleased) * 5 / scale;
+		double[] velocity = this.getShotSpeed(scale, this.xPressed, this.yPressed, this.xReleased, this.yReleased);
+		ball.xVel = velocity[0]; ball.yVel = velocity[1];
 	}
 
 	/**
@@ -99,5 +99,22 @@ public class BallController {
 		ball.xPos = (this.xPressed - xOffset)/scale; ball.xVel = 0;
 		ball.yPos = (this.yPressed - yOffset)/scale; ball.yVel = 0;
 		ball.sunk = false;
+	}
+
+	/**
+	 * Gets the velocity a ball would be fired at based on where the mouse was initially pressed and where it was released.
+	 * 
+	 * @param     scale Ratio between the size of the canvas and the size of the GameState the ball is in
+	 * @param  xPressed X coordinate of where the mouse was initially pressed
+	 * @param  yPressed Y coordinate of where the mouse was initially pressed
+	 * @param xReleased X coordinate of where the mouse was released
+	 * @param yReleased Y coordinate of where the mouse was released
+	 * @return          An array of doubles containing the resultant velocity in the x direction and the y direction, in that order
+	 */
+	public double[] getShotSpeed(double scale, double xPressed, double yPressed, double xReleased, double yReleased){
+		double xVel = (xPressed - xReleased) * 5 / scale;
+		double yVel = (yPressed - yReleased) * 5 / scale;
+
+		return new double[]{xVel, yVel};
 	}
 }
