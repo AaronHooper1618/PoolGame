@@ -31,15 +31,30 @@ class GameState {
 
 		// add rack
 		double distance = Math.sqrt(3)*radius; // distance between each column of balls on the rack
-		int reds = 7; int blues = 7; int type;
+		int reds = 6; int blues = 6; int type;
+		boolean redCorner = false; boolean blueCorner = false;
 		int xi = 168; int yi = 56;
 
-		for(int j = 0; j < 5; j++){
-			for(int k = 0; k <= j; k++){
-				// determine what type of ball is going to be placed in this spot
-				if (j == 2 && k == 1){type = Ball.TYPE_8BALL;} // 8 ball in center of rack
-				else if (Math.random() < (double)(reds)/(reds+blues)){type = Ball.TYPE_RED; reds--;} // pick a red ball based on how many reds and blues are left
-				else {type = Ball.TYPE_BLUE; blues--;} // pick a blue ball if we dont pick a red ball
+		// determine which ball is placed in each spot
+		for (int j = 0; j < 5; j++){
+			for (int k = 0; k <= j; k++){
+				if (j == 2 && k == 1){ // 8 ball in center of rack
+					type = Ball.TYPE_8BALL; 
+				}
+				else if (j == 4 && (k == 0 || k == 4)){ // red and blue ball in each of the corners
+					if (redCorner){type = Ball.TYPE_BLUE;} // if the other corner ball was red, then this one should be blue (and vice versa)
+					else if (blueCorner){type = Ball.TYPE_RED;}
+					else {
+						// if we havent placed a corner ball yet, pick a random type
+						// but keep track of what type we just placed down for the other corner later
+						type = Math.random() < 0.5 ? Ball.TYPE_BLUE : Ball.TYPE_RED;
+						redCorner = (type == Ball.TYPE_RED); blueCorner = (type == Ball.TYPE_BLUE);
+					}
+				}
+				else { // place red/blue balls randomly everywhere else
+					if (Math.random() < (double)(reds)/(reds+blues)){type = Ball.TYPE_RED; reds--;} // pick a red ball based on how many reds and blues are left
+					else {type = Ball.TYPE_BLUE; blues--;} // pick a blue ball if we dont pick a red ball
+				}
 
 				table.addBall(new Ball(radius, type, xi+j*distance, yi+k*radius*2-j*radius));
 			}
