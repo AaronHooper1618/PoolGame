@@ -136,6 +136,23 @@ class GameState {
 				}
 			}
 
+			// if the 8 ball's sunken, we need to declare a winner. (i.e. set their group to 3) but there's a couple caveats...
+			// TODO: enum for player group?
+			if (this.table.sunkByType[Ball.TYPE_8BALL] != 0 && lastSunkByType[Ball.TYPE_8BALL] == 0){
+				if (foul){ // if we committed a foul while sinking the 8 ball, the opponent wins
+					groups[(turn+1)%2] = 3;
+				}
+				else if (groups[turn] == -1){ // if we didn't even have a group yet and we sunk the 8 ball, the opponent wins
+					groups[(turn+1)%2] = 3;
+				}
+				else if (lastSunkByType[groups[turn]] != 7){ // if we sunk the 8 ball before sinking all of our balls first, the opponent wins
+					groups[(turn+1)%2] = 3;
+				}
+				else { // otherwise, we win
+					groups[turn] = 3;
+				}
+			}
+
 			// now to figure out whether we change turns or not
 			if (groups[turn] != -1){ // if the player has an assigned group...
 				// ...only change turn if the player hasn't sunken a ball in their group or has committed a foul
@@ -164,6 +181,7 @@ class GameState {
 		switch (this.groups[player]){ // adjust color based on what group of balls they're hitting
 			case Ball.TYPE_RED: pColor = new Color(200, 7, 23); break;
 			case Ball.TYPE_BLUE: pColor = new Color(10, 7, 200); break;
+			case 3: pColor = new Color(230, 210, 0); break; // color/type for winner (TODO: enum for player group?)
 			default: pColor = Color.black; break;
 		}
 		// change color based on if they're allowed to place/hit the ball at the moment
