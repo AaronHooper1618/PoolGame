@@ -45,7 +45,7 @@ public class Pocket {
 			double distance = this.distanceFromPocket(b.xPos, b.yPos);
 			distance -= this.radius;
 
-			if (distance < b.radius*-0.6){
+			if (distance < b.radius * (1 - 2*0.6)){
 				return true;
 			}
 			return false;
