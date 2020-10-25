@@ -128,7 +128,10 @@ class GameState {
 			if (this.table.sunkByType[Ball.TYPE_CUEBALL] != 0){foul = true;} // 1. we sunk the cueball
 			else if (firstContact == -1){foul = true;} // 2. we didn't hit anything
 			else if (firstContact != 0){ // 3. we had an assigned group...
-				if (firstContact != groups[turn]){ // ...and didnt hit a ball from our group first
+				if (firstContact != groups[turn] && lastSunkByType[groups[turn]] != 7){ // ...and didnt hit a ball from our group first (provided all our balls arent sunken yet)
+					foul = true;
+				}
+				else if (firstContact != Ball.TYPE_8BALL && lastSunkByType[groups[turn]] == 7){ // or we didn't hit the cueball first (provided all our balls are already sunken)
 					foul = true;
 				}
 			}
